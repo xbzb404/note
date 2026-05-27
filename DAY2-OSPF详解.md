@@ -1,4 +1,4 @@
-# OSPF 详解笔记
+# DAY2: OSPF 详解
 
 ## 一、OSPF 基础概念
 
