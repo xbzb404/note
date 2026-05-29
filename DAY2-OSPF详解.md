@@ -120,7 +120,7 @@
 1. **Down**：初始状态，未收到Hello。
 2. **Attempt**：仅NBMA网络，主动发送Hello但未收到回复。
 3. **Init**：收到对方的Hello报文。
-4. **2-way**：收到Hello中包含自己的Router-ID。如果无需形成邻接（如DRother之间,非DR/BDR），停留在此；否则继续。
+4. **2-way**：收到Hello中包含自己的Router-ID。如果无需形成邻接（如DRother之间,非DR/BDR），停留在此，为邻居关系；否则继续。
 5. **Exstart**：协商**主从关系**，确定DD序列号。
 6. **Exchange**：交换**DD报文**。
 7. **Loading**：交换**LSR/LSU/LSAck**，同步LSA。
