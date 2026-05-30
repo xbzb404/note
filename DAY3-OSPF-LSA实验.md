@@ -10,7 +10,7 @@
 
 请用如下拓扑图，介绍清楚当前整个OSPF网络中，有哪些是p2pLink、transnetLink、stubLink和LSA 2以及SPT怎么计算。
 
-因为未配置loop，自动使用第一个配置的IP作为RID
+因为未指定RID,也未配置loop，自动使用第一个配置的IP作为RID
 
 RID
 
