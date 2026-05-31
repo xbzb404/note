@@ -8,6 +8,16 @@
 
 ![image-20260529221929130](DAY3-OSPF-LSA实验.assets/image-20260529221929130.png)
 
+此处使用
+
+silent-interface GigabitEthernet g0/0/0
+
+silent-interface GigabitEthernet g0/0/2
+
+将PC1和PC2静默，以优化网络带宽和安全
+
+
+
 请用如下拓扑图，介绍清楚当前整个OSPF网络中，有哪些是p2pLink、transnetLink、stubLink和LSA 2以及SPT怎么计算。
 
 因为未指定RID,也未配置loop，自动使用第一个配置的IP作为RID
