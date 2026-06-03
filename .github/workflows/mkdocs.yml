@@ -1,0 +1,56 @@
+name: 部署笔记站点
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: 配置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+          
+      - name: 安装 MkDocs Material
+        run: pip install mkdocs-material
+        
+      - name: 准备文件
+        run: |
+          mkdir -p docs
+          find . -maxdepth 1 -name "*.md" -exec cp {} docs/ \;
+          cp -r *.assets docs/ 2>/dev/null || true
+          echo "# 📝 HCIP 学习笔记" > docs/index.md
+          echo "" >> docs/index.md
+          echo "欢迎访问我的网络学习笔记。" >> docs/index.md
+          
+      - name: 生成 mkdocs.yml
+        run: |
+          cat > mkdocs.yml << 'EOF'
+          site_name: HCIP 学习笔记
+          site_url: https://xbzb404.github.io/note/
+          theme:
+            name: material
+            features:
+              - navigation.instant
+              - navigation.tracking
+              - search.highlight
+              - search.share
+            palette:
+              - scheme: default
+                primary: indigo
+                accent: indigo
+          plugins:
+            - search
+          extra:
+            generator: false
+          EOF
+          
+      - name: 部署到 GitHub Pages
+        run: mkdocs gh-deploy --force
