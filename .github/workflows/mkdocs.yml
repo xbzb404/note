@@ -19,11 +19,13 @@ jobs:
       - name: 配置 Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11  # 使用稳定版本，避免 3.14 兼容性问题
+          python-version: '3.10'
           
-      - name: 安装 MkDocs Material（固定版本）
-        run: pip install mkdocs-material==9.5.33
-        
+      - name: 安装 MkDocs 和主题
+        run: |
+          pip install mkdocs==1.5.3
+          pip install mkdocs-material==9.5.33
+          
       - name: 准备文件并生成配置
         run: |
           mkdir -p docs
@@ -49,7 +51,7 @@ jobs:
           欢迎访问我的网络学习笔记。
           INDEXEOF
           
-          # 生成 mkdocs.yml
+          # 生成简化版的 mkdocs.yml（移除可能出问题的图标配置）
           cat > mkdocs.yml << 'MKDOCSYML'
           site_name: HCIP 学习笔记
           site_url: https://xbzb404.github.io/note/
@@ -68,13 +70,6 @@ jobs:
               - scheme: default
                 primary: indigo
                 accent: indigo
-                toggle:
-                  name: 切换到暗色模式
-              - scheme: slate
-                primary: indigo
-                accent: indigo
-                toggle:
-                  name: 切换到亮色模式
             language: zh
           
           plugins:
@@ -82,103 +77,7 @@ jobs:
           
           extra:
             generator: false
-          
-          extra_css:
-            - stylesheets/extra.css
-          
-          extra_javascript:
-            - javascripts/persist-nav.js
           MKDOCSYML
-          
-          # 创建自定义 CSS 文件
-          mkdir -p docs/stylesheets
-          cat > docs/stylesheets/extra.css << 'CSSEOF'
-          /* 侧边栏字体大小调整 */
-          .md-nav__title,
-          .md-nav__link {
-            font-size: 0.9rem !important;
-          }
-          
-          /* 侧边栏一级菜单字体稍大 */
-          .md-nav--primary .md-nav__item--active > .md-nav__link {
-            font-weight: 500;
-            font-size: 1rem !important;
-          }
-          
-          /* 侧边栏对齐优化 */
-          .md-nav__link {
-            padding-left: 0.5rem;
-          }
-          
-          /* 嵌套菜单缩进优化 */
-          .md-nav__list .md-nav__list {
-            margin-left: 0.5rem;
-          }
-          
-          .md-nav__item .md-nav__button {
-            left: -0.25rem;
-          }
-          CSSEOF
-          
-          # 创建持久化折叠状态的 JavaScript
-          mkdir -p docs/javascripts
-          cat > docs/javascripts/persist-nav.js << 'JSEOF'
-          (function() {
-            const STORAGE_KEY = 'mkdocs-nav-state';
-            
-            function saveNavState() {
-              const states = [];
-              document.querySelectorAll('.md-nav__item--nested').forEach(item => {
-                const isCollapsed = item.getAttribute('data-md-state') === 'collapsed';
-                const nav = item.closest('.md-nav');
-                const level = nav ? nav.getAttribute('data-md-level') : '0';
-                const link = item.querySelector('.md-nav__link');
-                const id = link ? link.innerText : '';
-                if (id) {
-                  states.push({ id, level, collapsed: isCollapsed });
-                }
-              });
-              localStorage.setItem(STORAGE_KEY, JSON.stringify(states));
-            }
-            
-            function restoreNavState() {
-              const saved = localStorage.getItem(STORAGE_KEY);
-              if (!saved) return;
-              
-              try {
-                const states = JSON.parse(saved);
-                states.forEach(state => {
-                  const items = document.querySelectorAll('.md-nav__item--nested');
-                  for (const item of items) {
-                    const link = item.querySelector('.md-nav__link');
-                    if (link && link.innerText === state.id) {
-                      const isCollapsed = item.getAttribute('data-md-state') === 'collapsed';
-                      if (state.collapsed !== isCollapsed) {
-                        const button = item.querySelector('.md-nav__button');
-                        if (button) button.click();
-                      }
-                      break;
-                    }
-                  }
-                });
-              } catch (e) {
-                console.warn('Failed to restore nav state:', e);
-              }
-            }
-            
-            document.addEventListener('click', function(e) {
-              if (e.target.closest('.md-nav__button')) {
-                setTimeout(saveNavState, 100);
-              }
-            });
-            
-            if (document.readyState === 'loading') {
-              document.addEventListener('DOMContentLoaded', restoreNavState);
-            } else {
-              restoreNavState();
-            }
-          })();
-          JSEOF
           
           # 添加 nav 配置
           echo "" >> mkdocs.yml
@@ -201,6 +100,9 @@ jobs:
               echo "      - ${filename}: ${path}" >> mkdocs.yml
             done
           fi
+          
+          echo "配置文件内容："
+          cat mkdocs.yml
           
       - name: 部署到 GitHub Pages
         run: mkdocs gh-deploy --force
