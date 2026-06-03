@@ -40,32 +40,86 @@ jobs:
           done
           
           # 创建首页
-          echo "# 📝 HCIP 学习笔记" > docs/index.md
-          echo "" >> docs/index.md
-          echo "欢迎访问我的网络学习笔记。" >> docs/index.md
+          cat > docs/index.md << 'EOF'
+          # 📝 HCIP 学习笔记
           
-          # 生成 mkdocs.yml
+          欢迎访问我的网络学习笔记。
+          EOF
+          
+          # 生成优化后的 mkdocs.yml
           cat > mkdocs.yml << 'EOF'
           site_name: HCIP 学习笔记
           site_url: https://xbzb404.github.io/note/
           use_directory_urls: false
+          
           theme:
             name: material
             features:
-              - navigation.instant
-              - navigation.sections
-              - navigation.expand
-              - navigation.tracking
-              - search.highlight
+              - navigation.instant        # 即时加载
+              - navigation.sections       # 将文件夹显示为分组
+              - navigation.expand         # 默认展开（但用户可以折叠）
+              - navigation.tracking       # 高亮当前阅读位置
+              - navigation.top            # 返回顶部按钮
+              - search.highlight          # 搜索高亮
+              - search.share              # 可分享搜索链接
+              - toc.integrate             # 将右侧目录整合到左侧导航
             palette:
               - scheme: default
                 primary: indigo
                 accent: indigo
+                toggle:
+                  name: 切换到暗色模式
+              - scheme: slate
+                primary: indigo
+                accent: indigo
+                toggle:
+                  name: 切换到亮色模式
             language: zh
+            # 字体设置：稍微调大正文字体
+            font:
+              text: Roboto
+              code: Roboto Mono
+          
+          # 自定义 CSS（解决侧边栏字体大小和对齐问题）
+          extra_css:
+            - stylesheets/extra.css
+          
           plugins:
             - search
+          
           extra:
             generator: false
+          EOF
+          
+          # 创建自定义 CSS 文件
+          mkdir -p docs/stylesheets
+          cat > docs/stylesheets/extra.css << 'EOF'
+          /* 侧边栏字体大小调整 */
+          .md-nav__title,
+          .md-nav__link {
+            font-size: 0.9rem !important;
+          }
+          
+          /* 侧边栏一级菜单字体稍大 */
+          .md-nav--primary .md-nav__item--active > .md-nav__link {
+            font-weight: 500;
+            font-size: 1rem !important;
+          }
+          
+          /* 侧边栏对齐优化 */
+          .md-nav__link {
+            padding-left: 0.5rem;
+          }
+          
+          /* 嵌套菜单缩进优化 */
+          .md-nav__list .md-nav__list {
+            margin-left: 0.5rem;
+          }
+          
+          /* 可折叠菜单箭头样式优化 */
+          .md-nav__item .md-nav__button {
+            left: -0.25rem;
+          }
           EOF
           
           # 添加 nav 配置
@@ -89,10 +143,6 @@ jobs:
               echo "      - ${filename}: ${path}" >> mkdocs.yml
             done
           fi
-          
-          # 显示生成的配置（调试用）
-          echo "========== 生成的 mkdocs.yml =========="
-          cat mkdocs.yml
           
       - name: 部署到 GitHub Pages
         run: mkdocs gh-deploy --force
