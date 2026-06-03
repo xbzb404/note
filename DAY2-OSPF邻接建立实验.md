@@ -1,4 +1,4 @@
-# DAY2-OSPF邻接建立实验
+# DAY2: OSPF邻接建立实验
 
 ![image-20260529131526103](DAY2-OSPF邻接建立实验.assets/image-20260529131526103.png)
 

@@ -1,4 +1,4 @@
-# DAY3 LSA Type1+Type2 实验
+# DAY3-LSA Type1+Type2 实验
 
 ![image-20260529214031364](DAY3-OSPF-LSA实验.assets/image-20260529214031364.png)
 

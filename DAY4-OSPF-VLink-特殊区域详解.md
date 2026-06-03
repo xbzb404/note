@@ -1,4 +1,4 @@
-# DAY4-OSPF-VLink-特殊区域详解
+# DAY4: OSPF-VLink-特殊区域详解
 
 ## 1. VLink（虚链路）
 
