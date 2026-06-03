@@ -42,11 +42,25 @@ jobs:
           # 创建首页
           cat > docs/index.md << 'EOF'
           # 📝 HCIP 学习笔记
+          
           欢迎访问我的网络学习笔记。
           EOF
           
-          # 生成 mkdocs.yml 配置
-          cat > mkdocs.yml << 'EOF'
+          # 自动生成 nav 配置（用文件名作为标题）
+          echo "生成 nav 配置..."
+          nav_config="nav:\n  - 首页: index.md"
+          
+          # 按文件名排序，添加所有笔记
+          find docs -name "*.md" ! -name "index.md" -type f | sort | while read file; do
+            # 获取文件名（不含扩展名）作为标题
+            title=$(basename "$file" .md)
+            # 获取相对路径
+            path="${file#docs/}"
+            nav_config="$nav_config\n  - $title: $path"
+          done
+          
+          # 生成完整的 mkdocs.yml
+          cat > mkdocs.yml << EOF
           site_name: HCIP 学习笔记
           site_url: https://xbzb404.github.io/note/
           theme:
@@ -66,6 +80,8 @@ jobs:
             - search
           extra:
             generator: false
+          
+          $nav_config
           EOF
           
       - name: 部署到 GitHub Pages
