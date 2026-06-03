@@ -5,11 +5,14 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
     steps:
       - uses: actions/checkout@v4
       
@@ -40,14 +43,14 @@ jobs:
           done
           
           # 创建首页
-          cat > docs/index.md << 'EOF'
+          cat > docs/index.md << 'INDEXEOF'
           # 📝 HCIP 学习笔记
           
           欢迎访问我的网络学习笔记。
-          EOF
+          INDEXEOF
           
-          # 生成优化后的 mkdocs.yml
-          cat > mkdocs.yml << 'EOF'
+          # 生成 mkdocs.yml
+          cat > mkdocs.yml << 'MKDOCSYML'
           site_name: HCIP 学习笔记
           site_url: https://xbzb404.github.io/note/
           use_directory_urls: false
@@ -55,14 +58,16 @@ jobs:
           theme:
             name: material
             features:
-              - navigation.instant        # 即时加载
-              - navigation.sections       # 将文件夹显示为分组
-              - navigation.expand         # 默认展开（但用户可以折叠）
-              - navigation.tracking       # 高亮当前阅读位置
-              - navigation.top            # 返回顶部按钮
-              - search.highlight          # 搜索高亮
-              - search.share              # 可分享搜索链接
-              - toc.integrate             # 将右侧目录整合到左侧导航
+              - navigation.instant
+              - navigation.instant.prefetch
+              - navigation.sections
+              - navigation.expand
+              - navigation.tracking
+              - navigation.top
+              - navigation.path
+              - toc.integrate
+              - search.highlight
+              - search.share
             palette:
               - scheme: default
                 primary: indigo
@@ -75,25 +80,23 @@ jobs:
                 toggle:
                   name: 切换到亮色模式
             language: zh
-            # 字体设置：稍微调大正文字体
-            font:
-              text: Roboto
-              code: Roboto Mono
-          
-          # 自定义 CSS（解决侧边栏字体大小和对齐问题）
-          extra_css:
-            - stylesheets/extra.css
           
           plugins:
             - search
           
           extra:
             generator: false
-          EOF
+          
+          extra_css:
+            - stylesheets/extra.css
+          
+          extra_javascript:
+            - javascripts/persist-nav.js
+          MKDOCSYML
           
           # 创建自定义 CSS 文件
           mkdir -p docs/stylesheets
-          cat > docs/stylesheets/extra.css << 'EOF'
+          cat > docs/stylesheets/extra.css << 'CSSEOF'
           /* 侧边栏字体大小调整 */
           .md-nav__title,
           .md-nav__link {
@@ -120,7 +123,70 @@ jobs:
           .md-nav__item .md-nav__button {
             left: -0.25rem;
           }
-          EOF
+          CSSEOF
+          
+          # 创建持久化折叠状态的 JavaScript
+          mkdir -p docs/javascripts
+          cat > docs/javascripts/persist-nav.js << 'JSEOF'
+          // 保存侧边栏折叠状态到 localStorage
+          (function() {
+            const STORAGE_KEY = 'mkdocs-nav-state';
+            
+            function saveNavState() {
+              const states = [];
+              document.querySelectorAll('.md-nav__item--nested').forEach(item => {
+                const isCollapsed = item.getAttribute('data-md-state') === 'collapsed';
+                const nav = item.closest('.md-nav');
+                const level = nav ? nav.getAttribute('data-md-level') : '0';
+                // 生成唯一标识
+                const id = item.querySelector('.md-nav__link')?.innerText || '';
+                if (id) {
+                  states.push({ id, level, collapsed: isCollapsed });
+                }
+              });
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(states));
+            }
+            
+            function restoreNavState() {
+              const saved = localStorage.getItem(STORAGE_KEY);
+              if (!saved) return;
+              
+              try {
+                const states = JSON.parse(saved);
+                states.forEach(state => {
+                  const items = document.querySelectorAll('.md-nav__item--nested');
+                  for (const item of items) {
+                    const link = item.querySelector('.md-nav__link');
+                    if (link && link.innerText === state.id) {
+                      const isCollapsed = item.getAttribute('data-md-state') === 'collapsed';
+                      if (state.collapsed !== isCollapsed) {
+                        const button = item.querySelector('.md-nav__button');
+                        if (button) button.click();
+                      }
+                      break;
+                    }
+                  }
+                });
+              } catch (e) {
+                console.warn('Failed to restore nav state:', e);
+              }
+            }
+            
+            // 监听折叠/展开事件
+            document.addEventListener('click', function(e) {
+              if (e.target.closest('.md-nav__button')) {
+                setTimeout(saveNavState, 100);
+              }
+            });
+            
+            // 页面加载后恢复状态
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', restoreNavState);
+            } else {
+              restoreNavState();
+            }
+          })();
+          JSEOF
           
           # 添加 nav 配置
           echo "" >> mkdocs.yml
@@ -143,6 +209,9 @@ jobs:
               echo "      - ${filename}: ${path}" >> mkdocs.yml
             done
           fi
+          
+          echo "========== 生成的 mkdocs.yml =========="
+          cat mkdocs.yml
           
       - name: 部署到 GitHub Pages
         run: mkdocs gh-deploy --force
