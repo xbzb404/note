@@ -1,0 +1,28 @@
+name: 自动生成目录
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 生成文件列表
+        run: |
+          echo "# 📝 笔记目录" > README.md
+          echo "" >> README.md
+          echo "| 文件名 | 链接 |" >> README.md
+          echo "|--------|------|" >> README.md
+          for file in $(find . -name "*.md" -not -name "README.md" | sort); do
+            name=$(basename "$file" .md)
+            echo "| $name | [查看]($file) |" >> README.md
+          done
+      - name: 提交更新
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add README.md
+          git diff --quiet && git diff --staged --quiet || git commit -m "自动更新目录"
+          git push
