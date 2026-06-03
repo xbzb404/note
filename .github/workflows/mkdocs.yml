@@ -25,7 +25,7 @@ jobs:
         run: |
           mkdir -p docs
           
-          # 复制所有 .md 文件（保持目录结构）
+          # 复制所有 .md 文件
           find . -type f -name "*.md" ! -path "./.*" ! -name "README.md" | while read file; do
             dest="docs/${file#./}"
             mkdir -p "$(dirname "$dest")"
@@ -46,11 +46,8 @@ jobs:
           欢迎访问我的网络学习笔记。
           EOF
           
-          # 生成 nav 配置（强制使用文件名，不读文件内标题）
-          echo "生成 nav 配置..."
-          
-          # 开始 nav 配置
-          cat > mkdocs.yml << 'HEADER'
+          # 生成 mkdocs.yml（正确的 YAML 格式）
+          cat > mkdocs.yml << 'EOF'
           site_name: HCIP 学习笔记
           site_url: https://xbzb404.github.io/note/
           theme:
@@ -70,24 +67,24 @@ jobs:
             - search
           extra:
             generator: false
+          EOF
           
-          nav:
-            - 首页: index.md
-          HEADER
+          # 手动添加 nav 部分（正确的 YAML 格式）
+          echo "" >> mkdocs.yml
+          echo "nav:" >> mkdocs.yml
+          echo "  - 首页: index.md" >> mkdocs.yml
           
-          # 递归查找所有 .md 文件，按文件名生成 nav
+          # 添加所有笔记文件
           find docs -name "*.md" ! -name "index.md" -type f | sort | while read file; do
-            # 获取文件名（不含扩展名）作为标题
             filename=$(basename "$file" .md)
-            # 获取相对路径
             path="${file#docs/}"
-            # 添加到 mkdocs.yml
-            echo "            - $filename: $path" >> mkdocs.yml
+            # 替换文件名中的 - 为 ：
+            display_name=$(echo "$filename" | sed 's/-/：/g')
+            echo "  - ${display_name}: ${path}" >> mkdocs.yml
           done
           
-          # 显示生成的 nav 内容（调试用）
-          echo "生成的 nav 配置："
-          tail -20 mkdocs.yml
+          echo "生成的 mkdocs.yml 内容："
+          cat mkdocs.yml
           
       - name: 部署到 GitHub Pages
         run: mkdocs gh-deploy --force
