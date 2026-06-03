@@ -4,7 +4,7 @@
 
 #### 1. VLink实验一：area 0被分割，使用虚连接将其连接
 
-<img src="DAY4-VLink-特殊区域实验.assets/image-20260601214824120.png" alt="image-20260601214824120" style="zoom:200%;" />
+![image-20260601214824120](DAY4-VLink-特殊区域实验.assets/image-20260601214824120.png)
 
 AR1
 
