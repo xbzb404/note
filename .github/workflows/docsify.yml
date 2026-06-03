@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir -p deploy
           
-          # 开始生成 index.html
+          # 生成 index.html
           echo '<!DOCTYPE html>' > deploy/index.html
           echo '<html>' >> deploy/index.html
           echo '<head>' >> deploy/index.html
@@ -63,8 +63,8 @@ jobs:
           echo '    .theme-toggle:hover {' >> deploy/index.html
           echo '      opacity: 0.9;' >> deploy/index.html
           echo '    }' >> deploy/index.html
-          echo '    /* 右侧固定 TOC */' >> deploy/index.html
-          echo '    .docsify-toc {' >> deploy/index.html
+          echo '    /* 右侧固定 TOC：插件生成的是 .toc-nav */' >> deploy/index.html
+          echo '    .toc-nav {' >> deploy/index.html
           echo '      position: fixed !important;' >> deploy/index.html
           echo '      right: 24px;' >> deploy/index.html
           echo '      top: 80px;' >> deploy/index.html
@@ -80,7 +80,7 @@ jobs:
           echo '      z-index: 90;' >> deploy/index.html
           echo '      box-sizing: border-box;' >> deploy/index.html
           echo '    }' >> deploy/index.html
-          echo '    .docsify-toc a {' >> deploy/index.html
+          echo '    .toc-nav a {' >> deploy/index.html
           echo '      text-decoration: none;' >> deploy/index.html
           echo '      color: var(--text-color, #2c3e50);' >> deploy/index.html
           echo '      display: block;' >> deploy/index.html
@@ -89,22 +89,20 @@ jobs:
           echo '      transition: all 0.2s;' >> deploy/index.html
           echo '      line-height: 1.5;' >> deploy/index.html
           echo '    }' >> deploy/index.html
-          echo '    .docsify-toc a:hover {' >> deploy/index.html
+          echo '    .toc-nav a:hover {' >> deploy/index.html
           echo '      border-left-color: #2c6e9e;' >> deploy/index.html
           echo '      color: #2c6e9e;' >> deploy/index.html
           echo '    }' >> deploy/index.html
-          echo '    .docsify-toc .level-1 {' >> deploy/index.html
+          echo '    .toc-nav .lv2 {' >> deploy/index.html
           echo '      margin-left: 0;' >> deploy/index.html
           echo '      font-weight: 500;' >> deploy/index.html
           echo '    }' >> deploy/index.html
-          echo '    .docsify-toc .level-2 {' >> deploy/index.html
-          echo '      margin-left: 10px;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .docsify-toc .level-3 {' >> deploy/index.html
-          echo '      margin-left: 20px;' >> deploy/index.html
+          echo '    .toc-nav .lv3 {' >> deploy/index.html
+          echo '      margin-left: 12px;' >> deploy/index.html
+          echo '      font-size: 12px;' >> deploy/index.html
           echo '    }' >> deploy/index.html
           echo '    @media (max-width: 1200px) {' >> deploy/index.html
-          echo '      .docsify-toc {' >> deploy/index.html
+          echo '      .toc-nav {' >> deploy/index.html
           echo '        display: none !important;' >> deploy/index.html
           echo '      }' >> deploy/index.html
           echo '    }' >> deploy/index.html
