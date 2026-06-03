@@ -13,24 +13,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: 配置 Python
+      - name: 安装 MkDocs Material
         uses: actions/setup-python@v4
         with:
           python-version: 3.x
-          
-      - name: 安装 MkDocs Material
-        run: pip install mkdocs-material
-        
-      - name: 准备文件
+      - run: pip install mkdocs-material
+      
+      - name: 复制文件到 docs
         run: |
           mkdir -p docs
-          find . -maxdepth 1 -name "*.md" -exec cp {} docs/ \;
-          cp -r *.assets docs/ 2>/dev/null || true
+          # 复制所有 .md 文件（排除隐藏文件和 README）
+          find . -type f -name "*.md" ! -name "README.md" ! -path "./.*" -exec cp --parents {} docs/ \;
+          # 复制图片文件
+          find . -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.gif" -o -name "*.svg" \) ! -path "./.*" -exec cp --parents {} docs/ \;
+          # 创建首页
           echo "# 📝 HCIP 学习笔记" > docs/index.md
           echo "" >> docs/index.md
           echo "欢迎访问我的网络学习笔记。" >> docs/index.md
-          
-      - name: 生成 mkdocs.yml
+      
+      - name: 生成配置
         run: |
           cat > mkdocs.yml << 'EOF'
           site_name: HCIP 学习笔记
@@ -39,18 +40,14 @@ jobs:
             name: material
             features:
               - navigation.instant
-              - navigation.tracking
+              - navigation.sections
               - search.highlight
-              - search.share
             palette:
               - scheme: default
                 primary: indigo
-                accent: indigo
           plugins:
             - search
-          extra:
-            generator: false
           EOF
-          
-      - name: 部署到 GitHub Pages
+      
+      - name: 部署
         run: mkdocs gh-deploy --force
