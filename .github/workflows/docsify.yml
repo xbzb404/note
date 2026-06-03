@@ -1,0 +1,122 @@
+name: Deploy Docsify Site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.md'
+      - '**.assets/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: 创建 index.html（仅当不存在时）
+        run: |
+          if [ ! -f "index.html" ]; then
+            echo '<!DOCTYPE html>' > index.html
+            echo '<html>' >> index.html
+            echo '<head>' >> index.html
+            echo '  <meta charset="UTF-8">' >> index.html
+            echo '  <title>HCIP学习笔记</title>' >> index.html
+            echo '  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">' >> index.html
+            echo '</head>' >> index.html
+            echo '<body>' >> index.html
+            echo '  <div id="app"></div>' >> index.html
+            echo '  <script>' >> index.html
+            echo '    window.$docsify = {' >> index.html
+            echo '      name: "📝 HCIP学习笔记",' >> index.html
+            echo '      repo: "xbzb404/note",' >> index.html
+            echo '      loadSidebar: true,' >> index.html
+            echo '      search: "auto",' >> index.html
+            echo '      auto2top: true,' >> index.html
+            echo '      themeColor: "#2c6e9e",' >> index.html
+            echo '      notFoundPage: true' >> index.html
+            echo '    }' >> index.html
+            echo '  </script>' >> index.html
+            echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>' >> index.html
+            echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>' >> index.html
+            echo '</body>' >> index.html
+            echo '</html>' >> index.html
+            echo "✅ index.html 已创建"
+          else
+            echo "⏭️ index.html 已存在，跳过"
+          fi
+      
+      - name: 生成 _sidebar.md（覆盖更新，适配新目录结构）
+        run: |
+          echo "- **📁 笔记**" > _sidebar.md
+          
+          # 根目录笔记
+          for file in $(ls *.md 2>/dev/null | grep -v "README\|_sidebar" | sort); do
+            name=$(basename "$file" .md)
+            echo "  - [$name]($file)" >> _sidebar.md
+          done
+          
+          # 实验目录
+          if [ -d "实验" ]; then
+            echo "" >> _sidebar.md
+            echo "- **🧪 实验**" >> _sidebar.md
+            for file in $(ls 实验/*.md 2>/dev/null | sort); do
+              name=$(basename "$file" .md)
+              echo "  - [$name](实验/$(basename "$file"))" >> _sidebar.md
+            done
+          fi
+          
+          # 课堂随笔目录
+          if [ -d "课堂随笔" ]; then
+            echo "" >> _sidebar.md
+            echo "- **📒 课堂随笔**" >> _sidebar.md
+            for file in $(ls 课堂随笔/*.md 2>/dev/null | sort); do
+              name=$(basename "$file" .md)
+              echo "  - [$name](课堂随笔/$(basename "$file"))" >> _sidebar.md
+            done
+          fi
+          
+          # 首页
+          if [ -f "README.md" ]; then
+            echo "" >> _sidebar.md
+            echo "- **ℹ️ 关于**" >> _sidebar.md
+            echo "  - [首页](README.md)" >> _sidebar.md
+          fi
+          
+          echo "✅ _sidebar.md 已生成"
+          echo "========== 生成的侧边栏 =========="
+          cat _sidebar.md
+      
+      - name: 提交 _sidebar.md 到仓库
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _sidebar.md
+          git diff --staged --quiet || git commit -m "auto: 更新侧边栏"
+          git push
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
