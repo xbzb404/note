@@ -1,4 +1,4 @@
-name: Deploy Docsify Site
+name: Sync Notes to gh-pages
 
 on:
   push:
@@ -18,100 +18,95 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  sync-and-deploy:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-      - name: Checkout main 分支（只读）
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
-          path: source
+          path: main
       
-      - name: 准备部署目录
+      - name: Prepare deploy files
         run: |
-          # 创建部署目录
           mkdir -p deploy
           
-          # 复制 index.html（如果不存在则创建）
-          if [ ! -f "source/index.html" ]; then
-            cat > deploy/index.html << 'EOF'
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <meta charset="UTF-8">
-              <title>xbzb的HCIP学习笔记</title>
-              <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
-            </head>
-            <body>
-              <div id="app"></div>
-              <script>
-                window.$docsify = {
-                  name: '📝 HCIP学习笔记',
-                  repo: 'xbzb404/note',
-                  loadSidebar: true,
-                  search: 'auto',
-                  auto2top: true,
-                  themeColor: '#2c6e9e',
-                  notFoundPage: true
-                }
-              </script>
-              <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
-              <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
-            </body>
-            </html>
-            EOF
-          else
-            cp source/index.html deploy/
-          fi
+          # 用 echo 创建 index.html
+          echo '<!DOCTYPE html>' > deploy/index.html
+          echo '<html>' >> deploy/index.html
+          echo '<head>' >> deploy/index.html
+          echo '  <meta charset="UTF-8">' >> deploy/index.html
+          echo '  <title>HCIP学习笔记</title>' >> deploy/index.html
+          echo '  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">' >> deploy/index.html
+          echo '</head>' >> deploy/index.html
+          echo '<body>' >> deploy/index.html
+          echo '  <div id="app"></div>' >> deploy/index.html
+          echo '  <script>' >> deploy/index.html
+          echo '    window.$docsify = {' >> deploy/index.html
+          echo '      name: "📝 HCIP学习笔记",' >> deploy/index.html
+          echo '      repo: "xbzb404/note",' >> deploy/index.html
+          echo '      loadSidebar: true,' >> deploy/index.html
+          echo '      search: "auto",' >> deploy/index.html
+          echo '      auto2top: true,' >> deploy/index.html
+          echo '      themeColor: "#2c6e9e",' >> deploy/index.html
+          echo '      notFoundPage: true' >> deploy/index.html
+          echo '    }' >> deploy/index.html
+          echo '  </script>' >> deploy/index.html
+          echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>' >> deploy/index.html
+          echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>' >> deploy/index.html
+          echo '</body>' >> deploy/index.html
+          echo '</html>' >> deploy/index.html
           
-          # 复制所有笔记文件
-          cp -r source/*.md source/实验 source/课堂随笔 deploy/ 2>/dev/null || true
+          # 复制笔记
+          cp -r main/*.md main/实验 main/课堂随笔 main/*.assets deploy/ 2>/dev/null || true
           
-          # 复制 .assets 文件夹
-          cp -r source/*.assets deploy/ 2>/dev/null || true
-          cp -r source/实验/*.assets deploy/实验/ 2>/dev/null || true
-          cp -r source/课堂随笔/*.assets deploy/课堂随笔/ 2>/dev/null || true
-          
-          # 生成 _sidebar.md（在部署目录中）
+          # 生成侧边栏
           echo "- **📁 笔记**" > deploy/_sidebar.md
           
-          # 根目录笔记
-          for file in $(ls source/*.md 2>/dev/null | grep -v "README\|_sidebar" | sort); do
+          cd main
+          for file in $(ls *.md 2>/dev/null | grep -v "README\|_sidebar" | sort); do
             name=$(basename "$file" .md)
-            echo "  - [$name]($(basename "$file"))" >> deploy/_sidebar.md
+            echo "  - [$name]($file)" >> ../deploy/_sidebar.md
           done
           
-          # 实验目录
-          if [ -d "source/实验" ]; then
-            echo "" >> deploy/_sidebar.md
-            echo "- **🧪 实验**" >> deploy/_sidebar.md
-            for file in $(ls source/实验/*.md 2>/dev/null | sort); do
+          if [ -d "实验" ]; then
+            echo "" >> ../deploy/_sidebar.md
+            echo "- **🧪 实验**" >> ../deploy/_sidebar.md
+            for file in $(ls 实验/*.md 2>/dev/null | sort); do
               name=$(basename "$file" .md)
-              echo "  - [$name](实验/$(basename "$file"))" >> deploy/_sidebar.md
+              echo "  - [$name](实验/$(basename "$file"))" >> ../deploy/_sidebar.md
             done
           fi
           
-          # 课堂随笔目录
-          if [ -d "source/课堂随笔" ]; then
-            echo "" >> deploy/_sidebar.md
-            echo "- **📒 课堂随笔**" >> deploy/_sidebar.md
-            for file in $(ls source/课堂随笔/*.md 2>/dev/null | sort); do
+          if [ -d "课堂随笔" ]; then
+            echo "" >> ../deploy/_sidebar.md
+            echo "- **📒 课堂随笔**" >> ../deploy/_sidebar.md
+            for file in $(ls 课堂随笔/*.md 2>/dev/null | sort); do
               name=$(basename "$file" .md)
-              echo "  - [$name](课堂随笔/$(basename "$file"))" >> deploy/_sidebar.md
+              echo "  - [$name](课堂随笔/$(basename "$file"))" >> ../deploy/_sidebar.md
             done
           fi
           
-          # 首页
-          if [ -f "source/README.md" ]; then
-            echo "" >> deploy/_sidebar.md
-            echo "- **ℹ️ 关于**" >> deploy/_sidebar.md
-            echo "  - [首页](README.md)" >> deploy/_sidebar.md
+          if [ -f "README.md" ]; then
+            echo "" >> ../deploy/_sidebar.md
+            echo "- **ℹ️ 关于**" >> ../deploy/_sidebar.md
+            echo "  - [首页](README.md)" >> ../deploy/_sidebar.md
           fi
+          cd ..
           
           echo "✅ 部署文件已准备"
+          ls -la deploy/
+      
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./deploy
+          publish_branch: gh-pages
+          force_orphan: true
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
