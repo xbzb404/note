@@ -19,16 +19,16 @@ jobs:
       - name: 配置 Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.x
+          python-version: 3.11  # 使用稳定版本，避免 3.14 兼容性问题
           
-      - name: 安装 MkDocs Material
-        run: pip install mkdocs-material
+      - name: 安装 MkDocs Material（固定版本）
+        run: pip install mkdocs-material==9.5.33
         
       - name: 准备文件并生成配置
         run: |
           mkdir -p docs
           
-          # 复制所有 .md 文件（保持目录结构）
+          # 复制所有 .md 文件
           find . -type f -name "*.md" ! -path "./.*" ! -name "README.md" | while read file; do
             dest="docs/${file#./}"
             mkdir -p "$(dirname "$dest")"
@@ -59,15 +59,11 @@ jobs:
             name: material
             features:
               - navigation.instant
-              - navigation.instant.prefetch
               - navigation.sections
               - navigation.expand
               - navigation.tracking
               - navigation.top
-              - navigation.path
-              - toc.integrate
               - search.highlight
-              - search.share
             palette:
               - scheme: default
                 primary: indigo
@@ -119,7 +115,6 @@ jobs:
             margin-left: 0.5rem;
           }
           
-          /* 可折叠菜单箭头样式优化 */
           .md-nav__item .md-nav__button {
             left: -0.25rem;
           }
@@ -128,7 +123,6 @@ jobs:
           # 创建持久化折叠状态的 JavaScript
           mkdir -p docs/javascripts
           cat > docs/javascripts/persist-nav.js << 'JSEOF'
-          // 保存侧边栏折叠状态到 localStorage
           (function() {
             const STORAGE_KEY = 'mkdocs-nav-state';
             
@@ -138,8 +132,8 @@ jobs:
                 const isCollapsed = item.getAttribute('data-md-state') === 'collapsed';
                 const nav = item.closest('.md-nav');
                 const level = nav ? nav.getAttribute('data-md-level') : '0';
-                // 生成唯一标识
-                const id = item.querySelector('.md-nav__link')?.innerText || '';
+                const link = item.querySelector('.md-nav__link');
+                const id = link ? link.innerText : '';
                 if (id) {
                   states.push({ id, level, collapsed: isCollapsed });
                 }
@@ -172,14 +166,12 @@ jobs:
               }
             }
             
-            // 监听折叠/展开事件
             document.addEventListener('click', function(e) {
               if (e.target.closest('.md-nav__button')) {
                 setTimeout(saveNavState, 100);
               }
             });
             
-            // 页面加载后恢复状态
             if (document.readyState === 'loading') {
               document.addEventListener('DOMContentLoaded', restoreNavState);
             } else {
@@ -193,14 +185,14 @@ jobs:
           echo "nav:" >> mkdocs.yml
           echo "  - 首页: index.md" >> mkdocs.yml
           
-          # 1. 先添加根目录的笔记（平铺）
+          # 根目录笔记
           find docs -maxdepth 1 -name "*.md" ! -name "index.md" -type f | sort | while read file; do
             filename=$(basename "$file" .md)
             path="${file#docs/}"
             echo "  - ${filename}: ${path}" >> mkdocs.yml
           done
           
-          # 2. 再添加课堂随笔文件夹（显示为分组，放在最后）
+          # 课堂随笔文件夹
           if [ -d "docs/课堂随笔" ]; then
             echo "  - 课堂随笔:" >> mkdocs.yml
             find docs/课堂随笔 -name "*.md" -type f | sort | while read file; do
@@ -209,9 +201,6 @@ jobs:
               echo "      - ${filename}: ${path}" >> mkdocs.yml
             done
           fi
-          
-          echo "========== 生成的 mkdocs.yml =========="
-          cat mkdocs.yml
           
       - name: 部署到 GitHub Pages
         run: mkdocs gh-deploy --force
