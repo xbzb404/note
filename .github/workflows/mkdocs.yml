@@ -21,17 +21,32 @@ jobs:
       - name: 安装 MkDocs Material
         run: pip install mkdocs-material
         
-      - name: 准备文件
+      - name: 准备文件并生成配置
         run: |
           mkdir -p docs
-          find . -maxdepth 1 -name "*.md" -exec cp {} docs/ \;
-          cp -r *.assets docs/ 2>/dev/null || true
-          echo "# 📝 HCIP 学习笔记" > docs/index.md
-          echo "" >> docs/index.md
-          echo "欢迎访问我的网络学习笔记。" >> docs/index.md
           
-      - name: 生成 mkdocs.yml
-        run: |
+          # 复制所有 .md 文件
+          find . -type f -name "*.md" ! -path "./.*" ! -name "README.md" | while read file; do
+            dest="docs/${file#./}"
+            mkdir -p "$(dirname "$dest")"
+            cp "$file" "$dest"
+          done
+          
+          # 复制所有 .assets 文件夹
+          find . -type d -name "*.assets" ! -path "./.*" | while read dir; do
+            dest="docs/${dir#./}"
+            mkdir -p "$(dirname "$dest")"
+            cp -r "$dir" "$dest" 2>/dev/null || true
+          done
+          
+          # 创建首页
+          cat > docs/index.md << 'EOF'
+          # 📝 HCIP 学习笔记
+          
+          欢迎访问我的网络学习笔记。
+          EOF
+          
+          # 生成 mkdocs.yml（正确的 YAML 格式）
           cat > mkdocs.yml << 'EOF'
           site_name: HCIP 学习笔记
           site_url: https://xbzb404.github.io/note/
@@ -39,18 +54,37 @@ jobs:
             name: material
             features:
               - navigation.instant
+              - navigation.sections
+              - navigation.expand
               - navigation.tracking
               - search.highlight
-              - search.share
             palette:
               - scheme: default
                 primary: indigo
                 accent: indigo
+            language: zh
           plugins:
             - search
           extra:
             generator: false
           EOF
+          
+          # 手动添加 nav 部分（正确的 YAML 格式）
+          echo "" >> mkdocs.yml
+          echo "nav:" >> mkdocs.yml
+          echo "  - 首页: index.md" >> mkdocs.yml
+          
+          # 添加所有笔记文件
+          find docs -name "*.md" ! -name "index.md" -type f | sort | while read file; do
+            filename=$(basename "$file" .md)
+            path="${file#docs/}"
+            # 替换文件名中的 - 为 ：
+            display_name=$(echo "$filename" | sed 's/-/：/g')
+            echo "  - ${display_name}: ${path}" >> mkdocs.yml
+          done
+          
+          echo "生成的 mkdocs.yml 内容："
+          cat mkdocs.yml
           
       - name: 部署到 GitHub Pages
         run: mkdocs gh-deploy --force
