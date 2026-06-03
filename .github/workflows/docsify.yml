@@ -63,7 +63,7 @@ jobs:
           echo '    .theme-toggle:hover {' >> deploy/index.html
           echo '      opacity: 0.9;' >> deploy/index.html
           echo '    }' >> deploy/index.html
-          echo '    /* 右侧固定 TOC */' >> deploy/index.html
+          echo '    /* 右侧固定 TOC：插件生成的是 .toc-nav */' >> deploy/index.html
           echo '    .toc-nav {' >> deploy/index.html
           echo '      position: fixed !important;' >> deploy/index.html
           echo '      right: 24px;' >> deploy/index.html
@@ -126,19 +126,9 @@ jobs:
           echo '      notFoundPage: true,' >> deploy/index.html
           echo '      toc: {' >> deploy/index.html
           echo '        tocMaxLevel: 3,' >> deploy/index.html
-          echo '        target: "h2, h3"' >> deploy/index.html
-          echo '      },' >> deploy/index.html
-          echo '      plugins: [' >> deploy/index.html
-          echo '        function(hook) {' >> deploy/index.html
-          echo '          hook.doneEach(function() {' >> deploy/index.html
-          echo '            // 把 TOC 从内容区移到 body 下，这样 fixed 才生效' >> deploy/index.html
-          echo '            var toc = document.querySelector(".toc-nav");' >> deploy/index.html
-          echo '            if (toc && toc.parentElement !== document.body) {' >> deploy/index.html
-          echo '              document.body.appendChild(toc);' >> deploy/index.html
-          echo '            }' >> deploy/index.html
-          echo '          });' >> deploy/index.html
-          echo '        }' >> deploy/index.html
-          echo '      ]' >> deploy/index.html
+          echo '        target: "h2, h3",' >> deploy/index.html
+          echo '        container: "body"' >> deploy/index.html
+          echo '      }' >> deploy/index.html
           echo '    }' >> deploy/index.html
           echo '  </script>' >> deploy/index.html
           echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>' >> deploy/index.html
