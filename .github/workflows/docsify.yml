@@ -30,108 +30,108 @@ jobs:
         with:
           path: main
       - name: Prepare deploy files
-          run: |
-            mkdir -p deploy
-              # 创建 index.html（带主题切换）
-            echo '<!DOCTYPE html>' > deploy/index.html
-            echo '<html>' >> deploy/index.html
-            echo '<head>' >> deploy/index.html
-            echo '  <meta charset="UTF-8">' >> deploy/index.html
-            echo '  <title>HCIP学习笔记</title>' >> deploy/index.html
-            echo '  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">' >> deploy/index.html
-            echo '  <style>' >> deploy/index.html
-            echo '    /* 主题切换按钮样式 */' >> deploy/index.html
-            echo '    .theme-toggle {' >> deploy/index.html
-            echo '      position: fixed;' >> deploy/index.html
-            echo '      bottom: 20px;' >> deploy/index.html
-            echo '      right: 20px;' >> deploy/index.html
-            echo '      width: 48px;' >> deploy/index.html
-            echo '      height: 48px;' >> deploy/index.html
-            echo '      border-radius: 50%;' >> deploy/index.html
-            echo '      background: #2c6e9e;' >> deploy/index.html
-            echo '      color: white;' >> deploy/index.html
-            echo '      border: none;' >> deploy/index.html
-            echo '      cursor: pointer;' >> deploy/index.html
-            echo '      font-size: 24px;' >> deploy/index.html
-            echo '      box-shadow: 0 2px 10px rgba(0,0,0,0.2);' >> deploy/index.html
-            echo '      z-index: 100;' >> deploy/index.html
-            echo '    }' >> deploy/index.html
-            echo '    /* 右侧目录样式 */' >> deploy/index.html
-            echo '    .docsify-toc {' >> deploy/index.html
-            echo '      position: fixed;' >> deploy/index.html
-            echo '      right: 20px;' >> deploy/index.html
-            echo '      top: 100px;' >> deploy/index.html
-            echo '      width: 260px;' >> deploy/index.html
-            echo '      max-height: 70vh;' >> deploy/index.html
-            echo '      overflow-y: auto;' >> deploy/index.html
-            echo '      background: var(--bg-color, #f8f9fa);' >> deploy/index.html
-            echo '      padding: 12px;' >> deploy/index.html
-            echo '      border-radius: 8px;' >> deploy/index.html
-            echo '      font-size: 14px;' >> deploy/index.html
-            echo '      box-shadow: 0 2px 8px rgba(0,0,0,0.1);' >> deploy/index.html
-            echo '      z-index: 100;' >> deploy/index.html
-            echo '    }' >> deploy/index.html
-            echo '    .docsify-toc a {' >> deploy/index.html
-            echo '      text-decoration: none;' >> deploy/index.html
-            echo '      color: var(--text-color, #2c3e50);' >> deploy/index.html
-            echo '      display: block;' >> deploy/index.html
-            echo '      padding: 4px 0;' >> deploy/index.html
-            echo '    }' >> deploy/index.html
-            echo '    .docsify-toc .level-1 { margin-left: 0; font-weight: 500; }' >> deploy/index.html
-            echo '    .docsify-toc .level-2 { margin-left: 15px; }' >> deploy/index.html
-            echo '    .docsify-toc .level-3 { margin-left: 30px; }' >> deploy/index.html
-            echo '    @media (max-width: 1200px) { .docsify-toc { display: none; } }' >> deploy/index.html
-            echo '  </style>' >> deploy/index.html
-            echo '</head>' >> deploy/index.html
-            echo '<body>' >> deploy/index.html
-            echo '  <div id="app"></div>' >> deploy/index.html
-            echo '  <button class="theme-toggle" id="theme-toggle">🌙</button>' >> deploy/index.html
-            echo '  <script>' >> deploy/index.html
-            echo '    window.$docsify = {' >> deploy/index.html
-            echo '      name: "📝 HCIP学习笔记",' >> deploy/index.html
-            echo '      repo: "xbzb404/note",' >> deploy/index.html
-            echo '      loadSidebar: true,' >> deploy/index.html
-            echo '      subMaxLevel: 0,' >> deploy/index.html
-            echo '      search: "auto",' >> deploy/index.html
-            echo '      auto2top: true,' >> deploy/index.html
-            echo '      notFoundPage: true,' >> deploy/index.html
-            echo '      toc: { tocMaxLevel: 3, target: "h2, h3" }' >> deploy/index.html
-            echo '    }' >> deploy/index.html
-            echo '  </script>' >> deploy/index.html
-            echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>' >> deploy/index.html
-            echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>' >> deploy/index.html
-            echo '  <script src="//unpkg.com/docsify-plugin-toc@1/dist/docsify-plugin-toc.min.js"></script>' >> deploy/index.html
-            echo '  <script>' >> deploy/index.html
-            echo '    // 主题切换' >> deploy/index.html
-            echo '    (function() {' >> deploy/index.html
-            echo '      const toggleBtn = document.getElementById("theme-toggle");' >> deploy/index.html
-            echo '      const themeLink = document.querySelector("link[rel=stylesheet]");' >> deploy/index.html
-            echo '      const savedTheme = localStorage.getItem("docsify-theme");' >> deploy/index.html
-            echo '      function setTheme(theme) {' >> deploy/index.html
-            echo '        if (theme === "dark") {' >> deploy/index.html
-            echo '          themeLink.href = "//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css";' >> deploy/index.html
-            echo '          toggleBtn.innerHTML = "☀️";' >> deploy/index.html
-            echo '          toggleBtn.style.background = "#1a2a2f";' >> deploy/index.html
-            echo '        } else {' >> deploy/index.html
-            echo '          themeLink.href = "//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css";' >> deploy/index.html
-            echo '          toggleBtn.innerHTML = "🌙";' >> deploy/index.html
-            echo '          toggleBtn.style.background = "#2c6e9e";' >> deploy/index.html
-            echo '        }' >> deploy/index.html
-            echo '        localStorage.setItem("docsify-theme", theme);' >> deploy/index.html
-            echo '      }' >> deploy/index.html
-            echo '      if (savedTheme === "dark") setTheme("dark");' >> deploy/index.html
-            echo '      else setTheme("light");' >> deploy/index.html
-            echo '      toggleBtn.addEventListener("click", function() {' >> deploy/index.html
-            echo '        const current = localStorage.getItem("docsify-theme");' >> deploy/index.html
-            echo '        setTheme(current === "dark" ? "light" : "dark");' >> deploy/index.html
-            echo '      });' >> deploy/index.html
-            echo '    })();' >> deploy/index.html
-            echo '  </script>' >> deploy/index.html
-            echo '</body>' >> deploy/index.html
-            echo '</html>' >> deploy/index.html
-            
-            # 复制笔记文件
-            cp -r main/*.md main/实验 main/课堂随笔 main/*.assets deploy/ 2>/dev/null || true
+        run: |
+          mkdir -p deploy
+            # 创建 index.html（带主题切换）
+          echo '<!DOCTYPE html>' > deploy/index.html
+          echo '<html>' >> deploy/index.html
+          echo '<head>' >> deploy/index.html
+          echo '  <meta charset="UTF-8">' >> deploy/index.html
+          echo '  <title>HCIP学习笔记</title>' >> deploy/index.html
+          echo '  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">' >> deploy/index.html
+          echo '  <style>' >> deploy/index.html
+          echo '    /* 主题切换按钮样式 */' >> deploy/index.html
+          echo '    .theme-toggle {' >> deploy/index.html
+          echo '      position: fixed;' >> deploy/index.html
+          echo '      bottom: 20px;' >> deploy/index.html
+          echo '      right: 20px;' >> deploy/index.html
+          echo '      width: 48px;' >> deploy/index.html
+          echo '      height: 48px;' >> deploy/index.html
+          echo '      border-radius: 50%;' >> deploy/index.html
+          echo '      background: #2c6e9e;' >> deploy/index.html
+          echo '      color: white;' >> deploy/index.html
+          echo '      border: none;' >> deploy/index.html
+          echo '      cursor: pointer;' >> deploy/index.html
+          echo '      font-size: 24px;' >> deploy/index.html
+          echo '      box-shadow: 0 2px 10px rgba(0,0,0,0.2);' >> deploy/index.html
+          echo '      z-index: 100;' >> deploy/index.html
+          echo '    }' >> deploy/index.html
+          echo '    /* 右侧目录样式 */' >> deploy/index.html
+          echo '    .docsify-toc {' >> deploy/index.html
+          echo '      position: fixed;' >> deploy/index.html
+          echo '      right: 20px;' >> deploy/index.html
+          echo '      top: 100px;' >> deploy/index.html
+          echo '      width: 260px;' >> deploy/index.html
+          echo '      max-height: 70vh;' >> deploy/index.html
+          echo '      overflow-y: auto;' >> deploy/index.html
+          echo '      background: var(--bg-color, #f8f9fa);' >> deploy/index.html
+          echo '      padding: 12px;' >> deploy/index.html
+          echo '      border-radius: 8px;' >> deploy/index.html
+          echo '      font-size: 14px;' >> deploy/index.html
+          echo '      box-shadow: 0 2px 8px rgba(0,0,0,0.1);' >> deploy/index.html
+          echo '      z-index: 100;' >> deploy/index.html
+          echo '    }' >> deploy/index.html
+          echo '    .docsify-toc a {' >> deploy/index.html
+          echo '      text-decoration: none;' >> deploy/index.html
+          echo '      color: var(--text-color, #2c3e50);' >> deploy/index.html
+          echo '      display: block;' >> deploy/index.html
+          echo '      padding: 4px 0;' >> deploy/index.html
+          echo '    }' >> deploy/index.html
+          echo '    .docsify-toc .level-1 { margin-left: 0; font-weight: 500; }' >> deploy/index.html
+          echo '    .docsify-toc .level-2 { margin-left: 15px; }' >> deploy/index.html
+          echo '    .docsify-toc .level-3 { margin-left: 30px; }' >> deploy/index.html
+          echo '    @media (max-width: 1200px) { .docsify-toc { display: none; } }' >> deploy/index.html
+          echo '  </style>' >> deploy/index.html
+          echo '</head>' >> deploy/index.html
+          echo '<body>' >> deploy/index.html
+          echo '  <div id="app"></div>' >> deploy/index.html
+          echo '  <button class="theme-toggle" id="theme-toggle">🌙</button>' >> deploy/index.html
+          echo '  <script>' >> deploy/index.html
+          echo '    window.$docsify = {' >> deploy/index.html
+          echo '      name: "📝 HCIP学习笔记",' >> deploy/index.html
+          echo '      repo: "xbzb404/note",' >> deploy/index.html
+          echo '      loadSidebar: true,' >> deploy/index.html
+          echo '      subMaxLevel: 0,' >> deploy/index.html
+          echo '      search: "auto",' >> deploy/index.html
+          echo '      auto2top: true,' >> deploy/index.html
+          echo '      notFoundPage: true,' >> deploy/index.html
+          echo '      toc: { tocMaxLevel: 3, target: "h2, h3" }' >> deploy/index.html
+          echo '    }' >> deploy/index.html
+          echo '  </script>' >> deploy/index.html
+          echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>' >> deploy/index.html
+          echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>' >> deploy/index.html
+          echo '  <script src="//unpkg.com/docsify-plugin-toc@1/dist/docsify-plugin-toc.min.js"></script>' >> deploy/index.html
+          echo '  <script>' >> deploy/index.html
+          echo '    // 主题切换' >> deploy/index.html
+          echo '    (function() {' >> deploy/index.html
+          echo '      const toggleBtn = document.getElementById("theme-toggle");' >> deploy/index.html
+          echo '      const themeLink = document.querySelector("link[rel=stylesheet]");' >> deploy/index.html
+          echo '      const savedTheme = localStorage.getItem("docsify-theme");' >> deploy/index.html
+          echo '      function setTheme(theme) {' >> deploy/index.html
+          echo '        if (theme === "dark") {' >> deploy/index.html
+          echo '          themeLink.href = "//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css";' >> deploy/index.html
+          echo '          toggleBtn.innerHTML = "☀️";' >> deploy/index.html
+          echo '          toggleBtn.style.background = "#1a2a2f";' >> deploy/index.html
+          echo '        } else {' >> deploy/index.html
+          echo '          themeLink.href = "//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css";' >> deploy/index.html
+          echo '          toggleBtn.innerHTML = "🌙";' >> deploy/index.html
+          echo '          toggleBtn.style.background = "#2c6e9e";' >> deploy/index.html
+          echo '        }' >> deploy/index.html
+          echo '        localStorage.setItem("docsify-theme", theme);' >> deploy/index.html
+          echo '      }' >> deploy/index.html
+          echo '      if (savedTheme === "dark") setTheme("dark");' >> deploy/index.html
+          echo '      else setTheme("light");' >> deploy/index.html
+          echo '      toggleBtn.addEventListener("click", function() {' >> deploy/index.html
+          echo '        const current = localStorage.getItem("docsify-theme");' >> deploy/index.html
+          echo '        setTheme(current === "dark" ? "light" : "dark");' >> deploy/index.html
+          echo '      });' >> deploy/index.html
+          echo '    })();' >> deploy/index.html
+          echo '  </script>' >> deploy/index.html
+          echo '</body>' >> deploy/index.html
+          echo '</html>' >> deploy/index.html
+          
+          # 复制笔记文件
+          cp -r main/*.md main/实验 main/课堂随笔 main/*.assets deploy/ 2>/dev/null || true
           
           # 生成侧边栏
           echo "- **📁 笔记**" > deploy/_sidebar.md
