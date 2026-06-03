@@ -25,7 +25,7 @@ jobs:
         run: |
           mkdir -p docs
           
-          # 复制所有 .md 文件
+          # 复制所有 .md 文件（保持目录结构）
           find . -type f -name "*.md" ! -path "./.*" ! -name "README.md" | while read file; do
             dest="docs/${file#./}"
             mkdir -p "$(dirname "$dest")"
@@ -40,16 +40,15 @@ jobs:
           done
           
           # 创建首页
-          cat > docs/index.md << 'EOF'
-          # 📝 HCIP 学习笔记
+          echo "# 📝 HCIP 学习笔记" > docs/index.md
+          echo "" >> docs/index.md
+          echo "欢迎访问我的网络学习笔记。" >> docs/index.md
           
-          欢迎访问我的网络学习笔记。
-          EOF
-          
-          # 生成 mkdocs.yml（正确的 YAML 格式）
+          # 生成 mkdocs.yml
           cat > mkdocs.yml << 'EOF'
           site_name: HCIP 学习笔记
           site_url: https://xbzb404.github.io/note/
+          use_directory_urls: false
           theme:
             name: material
             features:
@@ -69,21 +68,30 @@ jobs:
             generator: false
           EOF
           
-          # 手动添加 nav 部分（正确的 YAML 格式）
+          # 添加 nav 配置
           echo "" >> mkdocs.yml
           echo "nav:" >> mkdocs.yml
           echo "  - 首页: index.md" >> mkdocs.yml
           
-          # 添加所有笔记文件
-          find docs -name "*.md" ! -name "index.md" -type f | sort | while read file; do
+          # 1. 先添加根目录的笔记（平铺）
+          find docs -maxdepth 1 -name "*.md" ! -name "index.md" -type f | sort | while read file; do
             filename=$(basename "$file" .md)
             path="${file#docs/}"
-            # 替换文件名中的 - 为 ：
-            display_name=$(echo "$filename" | sed 's/-/：/g')
-            echo "  - ${display_name}: ${path}" >> mkdocs.yml
+            echo "  - ${filename}: ${path}" >> mkdocs.yml
           done
           
-          echo "生成的 mkdocs.yml 内容："
+          # 2. 再添加课堂随笔文件夹（显示为分组，放在最后）
+          if [ -d "docs/课堂随笔" ]; then
+            echo "  - 课堂随笔:" >> mkdocs.yml
+            find docs/课堂随笔 -name "*.md" -type f | sort | while read file; do
+              filename=$(basename "$file" .md)
+              path="${file#docs/}"
+              echo "      - ${filename}: ${path}" >> mkdocs.yml
+            done
+          fi
+          
+          # 显示生成的配置（调试用）
+          echo "========== 生成的 mkdocs.yml =========="
           cat mkdocs.yml
           
       - name: 部署到 GitHub Pages
