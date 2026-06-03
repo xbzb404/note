@@ -128,7 +128,8 @@ jobs:
           echo '      notFoundPage: true,' >> deploy/index.html
           echo '      toc: {' >> deploy/index.html
           echo '        tocMaxLevel: 3,' >> deploy/index.html
-          echo '        target: "h2, h3"' >> deploy/index.html
+          echo '        target: "h2, h3",' >> deploy/index.html
+          echo '        container: "body"' >> deploy/index.html
           echo '      }' >> deploy/index.html
           echo '    }' >> deploy/index.html
           echo '  </script>' >> deploy/index.html
