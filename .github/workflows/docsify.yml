@@ -63,7 +63,6 @@ jobs:
           echo '    .theme-toggle:hover {' >> deploy/index.html
           echo '      opacity: 0.9;' >> deploy/index.html
           echo '    }' >> deploy/index.html
-          echo '    /* 右侧固定 TOC：插件生成的是 .toc-nav */' >> deploy/index.html
           echo '    .toc-nav {' >> deploy/index.html
           echo '      position: fixed !important;' >> deploy/index.html
           echo '      right: 24px;' >> deploy/index.html
@@ -134,6 +133,24 @@ jobs:
           echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>' >> deploy/index.html
           echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>' >> deploy/index.html
           echo '  <script src="//unpkg.com/docsify-plugin-toc@1/dist/docsify-plugin-toc.min.js"></script>' >> deploy/index.html
+          echo '  <script src="//cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>' >> deploy/index.html
+          echo '  <script>' >> deploy/index.html
+          echo '    mermaid.initialize({' >> deploy/index.html
+          echo '      startOnLoad: true,' >> deploy/index.html
+          echo '      theme: "base",' >> deploy/index.html
+          echo '      themeVariables: { fontSize: "20px" }' >> deploy/index.html
+          echo '    });' >> deploy/index.html
+          echo '  </script>' >> deploy/index.html
+          echo '  <script>' >> deploy/index.html
+          echo '    (function() {' >> deploy/index.html
+          echo '      var plugin = function(hook, vm) {' >> deploy/index.html
+          echo '        hook.doneEach(function() {' >> deploy/index.html
+          echo '          mermaid.run();' >> deploy/index.html
+          echo '        });' >> deploy/index.html
+          echo '      };' >> deploy/index.html
+          echo '      window.$docsify.plugins = [].concat(window.$docsify.plugins || [], plugin);' >> deploy/index.html
+          echo '    })();' >> deploy/index.html
+          echo '  </script>' >> deploy/index.html
           echo '  <script>' >> deploy/index.html
           echo '    (function() {' >> deploy/index.html
           echo '      var toggleBtn = document.getElementById("theme-toggle");' >> deploy/index.html
