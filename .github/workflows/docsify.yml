@@ -42,69 +42,16 @@ jobs:
           echo '  <title>HCIP学习笔记</title>' >> deploy/index.html
           echo '  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">' >> deploy/index.html
           echo '  <style>' >> deploy/index.html
-          echo '    .theme-toggle {' >> deploy/index.html
-          echo '      position: fixed;' >> deploy/index.html
-          echo '      bottom: 24px;' >> deploy/index.html
-          echo '      right: 24px;' >> deploy/index.html
-          echo '      width: 46px;' >> deploy/index.html
-          echo '      height: 46px;' >> deploy/index.html
-          echo '      border-radius: 50%;' >> deploy/index.html
-          echo '      background: #2c6e9e;' >> deploy/index.html
-          echo '      color: white;' >> deploy/index.html
-          echo '      border: none;' >> deploy/index.html
-          echo '      cursor: pointer;' >> deploy/index.html
-          echo '      font-size: 20px;' >> deploy/index.html
-          echo '      box-shadow: 0 2px 12px rgba(0,0,0,0.15);' >> deploy/index.html
-          echo '      z-index: 110;' >> deploy/index.html
-          echo '      display: flex;' >> deploy/index.html
-          echo '      align-items: center;' >> deploy/index.html
-          echo '      justify-content: center;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .theme-toggle:hover {' >> deploy/index.html
-          echo '      opacity: 0.9;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .toc-nav {' >> deploy/index.html
-          echo '      position: fixed !important;' >> deploy/index.html
-          echo '      right: 24px;' >> deploy/index.html
-          echo '      top: 80px;' >> deploy/index.html
-          echo '      width: 240px;' >> deploy/index.html
-          echo '      max-height: calc(100vh - 140px);' >> deploy/index.html
-          echo '      overflow-y: auto;' >> deploy/index.html
-          echo '      background: var(--bg-color, #f8f9fa);' >> deploy/index.html
-          echo '      border: 1px solid var(--border-color, #e0e0e0);' >> deploy/index.html
-          echo '      border-radius: 10px;' >> deploy/index.html
-          echo '      padding: 16px;' >> deploy/index.html
-          echo '      font-size: 13px;' >> deploy/index.html
-          echo '      box-shadow: 0 2px 12px rgba(0,0,0,0.06);' >> deploy/index.html
-          echo '      z-index: 90;' >> deploy/index.html
-          echo '      box-sizing: border-box;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .toc-nav a {' >> deploy/index.html
-          echo '      text-decoration: none;' >> deploy/index.html
-          echo '      color: var(--text-color, #2c3e50);' >> deploy/index.html
-          echo '      display: block;' >> deploy/index.html
-          echo '      padding: 4px 0 4px 10px;' >> deploy/index.html
-          echo '      border-left: 2px solid transparent;' >> deploy/index.html
-          echo '      transition: all 0.2s;' >> deploy/index.html
-          echo '      line-height: 1.5;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .toc-nav a:hover {' >> deploy/index.html
-          echo '      border-left-color: #2c6e9e;' >> deploy/index.html
-          echo '      color: #2c6e9e;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .toc-nav .lv2 {' >> deploy/index.html
-          echo '      margin-left: 0;' >> deploy/index.html
-          echo '      font-weight: 500;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .toc-nav .lv3 {' >> deploy/index.html
-          echo '      margin-left: 12px;' >> deploy/index.html
-          echo '      font-size: 12px;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    @media (max-width: 1200px) {' >> deploy/index.html
-          echo '      .toc-nav {' >> deploy/index.html
-          echo '        display: none !important;' >> deploy/index.html
-          echo '      }' >> deploy/index.html
-          echo '    }' >> deploy/index.html
+          echo '    .theme-toggle { position: fixed; bottom: 24px; right: 24px; width: 46px; height: 46px; border-radius: 50%; background: #2c6e9e; color: white; border: none; cursor: pointer; font-size: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.15); z-index: 110; display: flex; align-items: center; justify-content: center; }' >> deploy/index.html
+          echo '    .theme-toggle:hover { opacity: 0.9; }' >> deploy/index.html
+          echo '    .toc-nav { position: fixed !important; right: 24px; top: 80px; width: 240px; max-height: calc(100vh - 140px); overflow-y: auto; background: var(--bg-color, #f8f9fa); border: 1px solid var(--border-color, #e0e0e0); border-radius: 10px; padding: 16px; font-size: 13px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); z-index: 90; box-sizing: border-box; }' >> deploy/index.html
+          echo '    .toc-nav a { text-decoration: none; display: block; color: var(--text-color, #2c3e50); padding: 4px 0 4px 10px; border-left: 2px solid transparent; transition: all 0.2s; line-height: 1.5; }' >> deploy/index.html
+          echo '    .toc-nav a:hover { border-left-color: #2c6e9e; color: #2c6e9e; }' >> deploy/index.html
+          echo '    .toc-nav .lv2 { margin-left: 0; font-weight: 500; }' >> deploy/index.html
+          echo '    .toc-nav .lv3 { margin-left: 12px; font-size: 12px; }' >> deploy/index.html
+          echo '    .toc-nav .lv4 { margin-left: 24px; font-size: 12px; }' >> deploy/index.html
+          echo '    .toc-nav .lv5 { margin-left: 36px; font-size: 12px; }' >> deploy/index.html
+          echo '    @media (max-width: 1200px) { .toc-nav { display: none !important; } }' >> deploy/index.html
           echo '  </style>' >> deploy/index.html
           echo '</head>' >> deploy/index.html
           echo '<body>' >> deploy/index.html
@@ -115,19 +62,11 @@ jobs:
           echo '      name: "📝 HCIP学习笔记",' >> deploy/index.html
           echo '      repo: "xbzb404/note",' >> deploy/index.html
           echo '      loadSidebar: true,' >> deploy/index.html
-          echo '      subMaxLevel: 0,' >> deploy/index.html
-          echo '      search: {' >> deploy/index.html
-          echo '        placeholder: "🔍 搜索笔记",' >> deploy/index.html
-          echo '        noData: "😢 没有找到结果",' >> deploy/index.html
-          echo '        depth: 4' >> deploy/index.html
-          echo '      },' >> deploy/index.html
+          echo '      subMaxLevel: 5,' >> deploy/index.html
+          echo '      search: { placeholder: "🔍 搜索笔记", noData: "😢 没有找到结果", depth: 4 },' >> deploy/index.html
           echo '      auto2top: true,' >> deploy/index.html
           echo '      notFoundPage: true,' >> deploy/index.html
-          echo '      toc: {' >> deploy/index.html
-          echo '        tocMaxLevel: 3,' >> deploy/index.html
-          echo '        target: "h2, h3",' >> deploy/index.html
-          echo '        container: "body"' >> deploy/index.html
-          echo '      }' >> deploy/index.html
+          echo '      toc: { tocMaxLevel: 5, target: "h2, h3, h4, h5", container: "body" }' >> deploy/index.html
           echo '    }' >> deploy/index.html
           echo '  </script>' >> deploy/index.html
           echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>' >> deploy/index.html
@@ -135,16 +74,19 @@ jobs:
           echo '  <script src="//unpkg.com/docsify-plugin-toc@1/dist/docsify-plugin-toc.min.js"></script>' >> deploy/index.html
           echo '  <script src="//cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>' >> deploy/index.html
           echo '  <script>' >> deploy/index.html
-          echo '    mermaid.initialize({' >> deploy/index.html
-          echo '      startOnLoad: true,' >> deploy/index.html
-          echo '      theme: "base",' >> deploy/index.html
-          echo '      themeVariables: { fontSize: "20px" }' >> deploy/index.html
-          echo '    });' >> deploy/index.html
+          echo '    mermaid.initialize({ startOnLoad: false, theme: "base", themeVariables: { fontSize: "20px" } });' >> deploy/index.html
           echo '  </script>' >> deploy/index.html
           echo '  <script>' >> deploy/index.html
           echo '    (function() {' >> deploy/index.html
           echo '      var plugin = function(hook, vm) {' >> deploy/index.html
           echo '        hook.doneEach(function() {' >> deploy/index.html
+          echo '          document.querySelectorAll("pre[data-lang=mermaid]").forEach(function(pre) {' >> deploy/index.html
+          echo '            var code = pre.textContent;' >> deploy/index.html
+          echo '            var div = document.createElement("div");' >> deploy/index.html
+          echo '            div.className = "mermaid";' >> deploy/index.html
+          echo '            div.textContent = code;' >> deploy/index.html
+          echo '            pre.parentNode.replaceChild(div, pre);' >> deploy/index.html
+          echo '          });' >> deploy/index.html
           echo '          mermaid.run();' >> deploy/index.html
           echo '        });' >> deploy/index.html
           echo '      };' >> deploy/index.html
