@@ -112,18 +112,23 @@ jobs:
                   depth: 4
                 },
                 auto2top: true,
-                notFoundPage: true
+                notFoundPage: true,
+                toc: {
+                  tocMaxLevel: 5,
+                  target: "h2, h3, h4, h5",
+                  container: ".toc-nav"
+                }
               }
             </script>
 
             <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
             <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+            <script src="//cdn.jsdelivr.net/npm/docsify-plugin-toc@1/dist/docsify-plugin-toc.min.js"></script>
             <script src="//cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 
             <script>
               mermaid.initialize({startOnLoad:false,theme:"base",themeVariables:{fontSize:"20px"}});
 
-              // Mermaid 渲染插件
               (function(){
                 var plugin=function(hook){
                   hook.doneEach(function(){
@@ -139,50 +144,6 @@ jobs:
                 window.$docsify.plugins=[].concat(window.$docsify.plugins||[],plugin);
               })();
 
-              // 右侧大纲渲染
-              (function(){
-                function renderTOC(){
-                  var container = document.querySelector(".toc-nav");
-                  if (!container) return;
-
-                  container.querySelectorAll("a,div").forEach(function(e){e.remove()});
-
-                  var content = document.querySelector(".markdown-section");
-                  if (!content) return;
-
-                  var headers = content.querySelectorAll("h2,h3,h4,h5");
-                  if (headers.length === 0) {
-                    var emp = document.createElement("div");
-                    emp.style.cssText = "color:#999;font-size:12px;padding:8px 0;";
-                    emp.textContent = "暂无大纲";
-                    container.appendChild(emp);
-                    return;
-                  }
-
-                  headers.forEach(function(h) {
-                    if (!h.id) h.id = h.textContent.replace(/\s+/g, "-").toLowerCase();
-                    var a = document.createElement("a");
-                    a.href = "#" + h.id;
-                    a.textContent = h.textContent;
-                    a.className = "lv" + h.tagName.substring(1);
-                    a.addEventListener("click", function(e) {
-                      e.preventDefault();
-                      h.scrollIntoView({ behavior: "smooth" });
-                      history.pushState(null, null, "#" + h.id);
-                    });
-                    container.appendChild(a);
-                  });
-                }
-
-                var p = function(hook) {
-                  hook.doneEach(function() {
-                    setTimeout(renderTOC, 200);
-                  });
-                };
-                window.$docsify.plugins = [].concat(window.$docsify.plugins || [], p);
-              })();
-
-              // 主题切换
               (function(){
                 var btn=document.getElementById("theme-toggle");
                 var link=document.querySelector("link[rel=stylesheet]");
@@ -213,17 +174,14 @@ jobs:
           print("✅ index.html 已生成")
           PYEOF
 
-          # 复制笔记文件
           cp -r main/*.md main/实验 main/课堂随笔 main/*.assets deploy/ 2>/dev/null || true
 
-          # 生成侧边栏
           python3 << 'PYEOF'
           import os
 
           lines = []
           main_dir = "main"
 
-          # 根目录 md 文件
           notes = []
           for f in sorted(os.listdir(main_dir)):
               if f.endswith(".md") and f not in ("README.md", "_sidebar.md"):
@@ -232,7 +190,6 @@ jobs:
               lines.append("- **📁 笔记**")
               lines.extend(notes)
 
-          # 子目录
           for sub, icon in [("实验", "🧪"), ("课堂随笔", "📒")]:
               sub_path = os.path.join(main_dir, sub)
               if os.path.isdir(sub_path):
@@ -241,12 +198,10 @@ jobs:
                       if f.endswith(".md"):
                           items.append(f"  - [{f[:-3]}]({sub}/{f})")
                   if items:
-                      if lines:
-                          lines.append("")
+                      if lines: lines.append("")
                       lines.append(f"- **{icon} {sub}**")
                       lines.extend(items)
 
-          # README
           if os.path.exists(os.path.join(main_dir, "README.md")):
               lines.append("")
               lines.append("- **ℹ️ 关于**")
