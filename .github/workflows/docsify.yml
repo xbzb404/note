@@ -88,6 +88,9 @@ jobs:
                 overflow-x: auto;
               }
 
+              /* 彻底隐藏侧边栏中的大纲 */
+              .sidebar-nav ul ul { display: none !important; }
+
               @media (max-width: 1200px) {
                 .toc-nav { display: none !important; }
                 .markdown-section, .mermaid {
@@ -105,7 +108,7 @@ jobs:
                 name: "📝 HCIP学习笔记",
                 repo: "xbzb404/note",
                 loadSidebar: true,
-                subMaxLevel: 5,
+                subMaxLevel: 0,
                 search: {
                   placeholder: "🔍 搜索笔记",
                   noData: "😢 没有找到结果",
@@ -211,13 +214,11 @@ jobs:
           lines = ["- **📁 笔记**"]
           main_dir = "main"
 
-          # 根目录 md 文件
           for f in sorted(os.listdir(main_dir)):
               if f.endswith(".md") and f not in ("README.md", "_sidebar.md"):
                   name = f[:-3]
                   lines.append(f"  - [{name}]({f})")
 
-          # 子目录
           for sub, icon in [("实验", "🧪"), ("课堂随笔", "📒")]:
               sub_path = os.path.join(main_dir, sub)
               if os.path.isdir(sub_path):
@@ -228,21 +229,20 @@ jobs:
                           name = f[:-3]
                           lines.append(f"  - [{name}]({sub}/{f})")
 
-          # README
           if os.path.exists(os.path.join(main_dir, "README.md")):
               lines.append("")
               lines.append("- **ℹ️ 关于**")
               lines.append("  - [首页](README.md)")
 
+          sidebar = "\n".join(lines)
           with open("deploy/_sidebar.md", "w", encoding="utf-8") as f:
-              f.write("\n".join(lines))
+              f.write(sidebar)
 
-          # 复制到子目录
           for sub in ["实验", "课堂随笔"]:
               sub_deploy = os.path.join("deploy", sub)
               if os.path.isdir(sub_deploy):
                   with open(os.path.join(sub_deploy, "_sidebar.md"), "w", encoding="utf-8") as f:
-                      f.write("\n".join(lines))
+                      f.write(sidebar)
 
           print("✅ _sidebar.md 已生成")
           PYEOF
