@@ -105,7 +105,7 @@ jobs:
                 name: "📝 HCIP学习笔记",
                 repo: "xbzb404/note",
                 loadSidebar: true,
-                subMaxLevel: 5,
+                subMaxLevel: 0,
                 search: {
                   placeholder: "🔍 搜索笔记",
                   noData: "😢 没有找到结果",
@@ -139,54 +139,47 @@ jobs:
                 window.$docsify.plugins=[].concat(window.$docsify.plugins||[],plugin);
               })();
 
-              // 自定义 TOC 渲染插件 + 防止侧边栏被污染
+              // 右侧大纲渲染
               (function(){
                 function renderTOC(){
-                  var c=document.querySelector(".toc-nav");
-                  if(!c)return;
-                  c.querySelectorAll("a,div").forEach(function(e){e.remove()});
-                  var m=document.querySelector(".markdown-section");
-                  if(!m)return;
-                  var hs=m.querySelectorAll("h2,h3,h4,h5");
-                  if(hs.length===0){
-                    var emp=document.createElement("div");
-                    emp.style.cssText="color:#999;font-size:12px;padding:8px 0;";
-                    emp.textContent="暂无大纲";
-                    c.appendChild(emp);
+                  var container = document.querySelector(".toc-nav");
+                  if (!container) return;
+
+                  container.querySelectorAll("a,div").forEach(function(e){e.remove()});
+
+                  var content = document.querySelector(".markdown-section");
+                  if (!content) return;
+
+                  var headers = content.querySelectorAll("h2,h3,h4,h5");
+                  if (headers.length === 0) {
+                    var emp = document.createElement("div");
+                    emp.style.cssText = "color:#999;font-size:12px;padding:8px 0;";
+                    emp.textContent = "暂无大纲";
+                    container.appendChild(emp);
                     return;
                   }
-                  hs.forEach(function(h){
-                    if(!h.id)h.id=h.textContent.replace(/\s+/g,"-").toLowerCase();
-                    var lv=parseInt(h.tagName.substring(1));
-                    var a=document.createElement("a");
-                    a.href="#"+h.id;
-                    a.textContent=h.textContent;
-                    a.className="lv"+lv;
-                    a.addEventListener("click",function(e){
+
+                  headers.forEach(function(h) {
+                    if (!h.id) h.id = h.textContent.replace(/\s+/g, "-").toLowerCase();
+                    var a = document.createElement("a");
+                    a.href = "#" + h.id;
+                    a.textContent = h.textContent;
+                    a.className = "lv" + h.tagName.substring(1);
+                    a.addEventListener("click", function(e) {
                       e.preventDefault();
-                      h.scrollIntoView({behavior:"smooth"});
+                      h.scrollIntoView({ behavior: "smooth" });
+                      history.pushState(null, null, "#" + h.id);
                     });
-                    c.appendChild(a);
+                    container.appendChild(a);
                   });
                 }
 
-                function cleanSidebar() {
-                  // 移除侧边栏中的 docsify-toc 内容
-                  var sidebar = document.querySelector(".sidebar-nav");
-                  if (!sidebar) return;
-                  var tocUl = sidebar.querySelector("ul.toc");
-                  if (tocUl) tocUl.remove();
-                }
-
-                var p=function(hook){
-                  hook.doneEach(function(){
-                    setTimeout(function(){
-                      cleanSidebar();
-                      renderTOC();
-                    }, 100);
+                var p = function(hook) {
+                  hook.doneEach(function() {
+                    setTimeout(renderTOC, 200);
                   });
                 };
-                window.$docsify.plugins=[].concat(window.$docsify.plugins||[],p);
+                window.$docsify.plugins = [].concat(window.$docsify.plugins || [], p);
               })();
 
               // 主题切换
@@ -227,30 +220,39 @@ jobs:
           python3 << 'PYEOF'
           import os
 
-          lines = ["- **📁 笔记**"]
+          lines = []
           main_dir = "main"
 
+          # 根目录 md 文件
+          notes = []
           for f in sorted(os.listdir(main_dir)):
               if f.endswith(".md") and f not in ("README.md", "_sidebar.md"):
-                  name = f[:-3]
-                  lines.append(f"  - [{name}]({f})")
+                  notes.append(f"  - [{f[:-3]}]({f})")
+          if notes:
+              lines.append("- **📁 笔记**")
+              lines.extend(notes)
 
+          # 子目录
           for sub, icon in [("实验", "🧪"), ("课堂随笔", "📒")]:
               sub_path = os.path.join(main_dir, sub)
               if os.path.isdir(sub_path):
-                  lines.append("")
-                  lines.append(f"- **{icon} {sub}**")
+                  items = []
                   for f in sorted(os.listdir(sub_path)):
                       if f.endswith(".md"):
-                          name = f[:-3]
-                          lines.append(f"  - [{name}]({sub}/{f})")
+                          items.append(f"  - [{f[:-3]}]({sub}/{f})")
+                  if items:
+                      if lines:
+                          lines.append("")
+                      lines.append(f"- **{icon} {sub}**")
+                      lines.extend(items)
 
+          # README
           if os.path.exists(os.path.join(main_dir, "README.md")):
               lines.append("")
               lines.append("- **ℹ️ 关于**")
               lines.append("  - [首页](README.md)")
 
-          sidebar = "\n".join(lines)
+          sidebar = "\n".join(lines) + "\n"
           with open("deploy/_sidebar.md", "w", encoding="utf-8") as f:
               f.write(sidebar)
 
