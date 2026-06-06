@@ -78,6 +78,7 @@ jobs:
           echo '      box-shadow: 0 2px 12px rgba(0,0,0,0.06);' >> deploy/index.html
           echo '      z-index: 90;' >> deploy/index.html
           echo '      box-sizing: border-box;' >> deploy/index.html
+          echo '      pointer-events: auto;' >> deploy/index.html
           echo '    }' >> deploy/index.html
           echo '    .toc-nav a {' >> deploy/index.html
           echo '      text-decoration: none;' >> deploy/index.html
@@ -108,9 +109,23 @@ jobs:
           echo '      margin-left: 36px;' >> deploy/index.html
           echo '      font-size: 12px;' >> deploy/index.html
           echo '    }' >> deploy/index.html
+          echo '    /* 为右侧大纲留出空间 */' >> deploy/index.html
+          echo '    .markdown-section {' >> deploy/index.html
+          echo '      margin-right: 280px;' >> deploy/index.html
+          echo '    }' >> deploy/index.html
+          echo '    .mermaid {' >> deploy/index.html
+          echo '      margin-right: 280px;' >> deploy/index.html
+          echo '      max-width: calc(100% - 280px);' >> deploy/index.html
+          echo '      overflow-x: auto;' >> deploy/index.html
+          echo '    }' >> deploy/index.html
           echo '    @media (max-width: 1200px) {' >> deploy/index.html
           echo '      .toc-nav {' >> deploy/index.html
           echo '        display: none !important;' >> deploy/index.html
+          echo '      }' >> deploy/index.html
+          echo '      .markdown-section,' >> deploy/index.html
+          echo '      .mermaid {' >> deploy/index.html
+          echo '        margin-right: 0;' >> deploy/index.html
+          echo '        max-width: 100%;' >> deploy/index.html
           echo '      }' >> deploy/index.html
           echo '    }' >> deploy/index.html
           echo '  </style>' >> deploy/index.html
