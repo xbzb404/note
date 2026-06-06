@@ -42,6 +42,7 @@ jobs:
           echo '  <title>HCIP学习笔记</title>' >> deploy/index.html
           echo '  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">' >> deploy/index.html
           echo '  <style>' >> deploy/index.html
+          echo '    /* 主题切换按钮 */' >> deploy/index.html
           echo '    .theme-toggle {' >> deploy/index.html
           echo '      position: fixed;' >> deploy/index.html
           echo '      bottom: 24px;' >> deploy/index.html
@@ -63,6 +64,8 @@ jobs:
           echo '    .theme-toggle:hover {' >> deploy/index.html
           echo '      opacity: 0.9;' >> deploy/index.html
           echo '    }' >> deploy/index.html
+          echo '' >> deploy/index.html
+          echo '    /* 右侧大纲容器 - 固定在右侧 */' >> deploy/index.html
           echo '    .toc-nav {' >> deploy/index.html
           echo '      position: fixed !important;' >> deploy/index.html
           echo '      right: 24px;' >> deploy/index.html
@@ -80,6 +83,19 @@ jobs:
           echo '      box-sizing: border-box;' >> deploy/index.html
           echo '      pointer-events: auto;' >> deploy/index.html
           echo '    }' >> deploy/index.html
+          echo '' >> deploy/index.html
+          echo '    /* 大纲标题 */' >> deploy/index.html
+          echo '    .toc-nav::before {' >> deploy/index.html
+          echo '      content: "📑 页面大纲";' >> deploy/index.html
+          echo '      display: block;' >> deploy/index.html
+          echo '      font-weight: 600;' >> deploy/index.html
+          echo '      font-size: 14px;' >> deploy/index.html
+          echo '      margin-bottom: 12px;' >> deploy/index.html
+          echo '      padding-bottom: 8px;' >> deploy/index.html
+          echo '      border-bottom: 1px solid var(--border-color, #e0e0e0);' >> deploy/index.html
+          echo '      color: var(--text-color, #2c3e50);' >> deploy/index.html
+          echo '    }' >> deploy/index.html
+          echo '' >> deploy/index.html
           echo '    .toc-nav a {' >> deploy/index.html
           echo '      text-decoration: none;' >> deploy/index.html
           echo '      color: var(--text-color, #2c3e50);' >> deploy/index.html
@@ -109,7 +125,8 @@ jobs:
           echo '      margin-left: 36px;' >> deploy/index.html
           echo '      font-size: 12px;' >> deploy/index.html
           echo '    }' >> deploy/index.html
-          echo '    /* 为右侧大纲留出空间 */' >> deploy/index.html
+          echo '' >> deploy/index.html
+          echo '    /* 内容区域避开右侧大纲 */' >> deploy/index.html
           echo '    .markdown-section {' >> deploy/index.html
           echo '      margin-right: 280px;' >> deploy/index.html
           echo '    }' >> deploy/index.html
@@ -118,6 +135,13 @@ jobs:
           echo '      max-width: calc(100% - 280px);' >> deploy/index.html
           echo '      overflow-x: auto;' >> deploy/index.html
           echo '    }' >> deploy/index.html
+          echo '' >> deploy/index.html
+          echo '    /* 隐藏侧边栏中的大纲（防止 toc 注入到侧边栏） */' >> deploy/index.html
+          echo '    .sidebar-nav .toc {' >> deploy/index.html
+          echo '      display: none !important;' >> deploy/index.html
+          echo '    }' >> deploy/index.html
+          echo '' >> deploy/index.html
+          echo '    /* 响应式：小屏幕隐藏右侧大纲 */' >> deploy/index.html
           echo '    @media (max-width: 1200px) {' >> deploy/index.html
           echo '      .toc-nav {' >> deploy/index.html
           echo '        display: none !important;' >> deploy/index.html
@@ -149,7 +173,8 @@ jobs:
           echo '      toc: {' >> deploy/index.html
           echo '        tocMaxLevel: 5,' >> deploy/index.html
           echo '        target: "h2, h3, h4, h5",' >> deploy/index.html
-          echo '        container: "body"' >> deploy/index.html
+          echo '        container: ".toc-nav",' >> deploy/index.html
+          echo '        ignoreHeaders: ["sidebar"]' >> deploy/index.html
           echo '      }' >> deploy/index.html
           echo '    }' >> deploy/index.html
           echo '  </script>' >> deploy/index.html
@@ -165,6 +190,7 @@ jobs:
           echo '    });' >> deploy/index.html
           echo '  </script>' >> deploy/index.html
           echo '  <script>' >> deploy/index.html
+          echo '    // Mermaid 渲染插件' >> deploy/index.html
           echo '    (function() {' >> deploy/index.html
           echo '      var plugin = function(hook, vm) {' >> deploy/index.html
           echo '        hook.doneEach(function() {' >> deploy/index.html
@@ -182,6 +208,7 @@ jobs:
           echo '    })();' >> deploy/index.html
           echo '  </script>' >> deploy/index.html
           echo '  <script>' >> deploy/index.html
+          echo '    // 主题切换功能' >> deploy/index.html
           echo '    (function() {' >> deploy/index.html
           echo '      var toggleBtn = document.getElementById("theme-toggle");' >> deploy/index.html
           echo '      var themeLink = document.querySelector("link[rel=stylesheet]");' >> deploy/index.html
