@@ -88,9 +88,6 @@ jobs:
                 overflow-x: auto;
               }
 
-              /* 彻底隐藏侧边栏中的大纲 */
-              .sidebar-nav ul ul { display: none !important; }
-
               @media (max-width: 1200px) {
                 .toc-nav { display: none !important; }
                 .markdown-section, .mermaid {
@@ -108,7 +105,7 @@ jobs:
                 name: "📝 HCIP学习笔记",
                 repo: "xbzb404/note",
                 loadSidebar: true,
-                subMaxLevel: 0,
+                subMaxLevel: 5,
                 search: {
                   placeholder: "🔍 搜索笔记",
                   noData: "😢 没有找到结果",
@@ -126,6 +123,7 @@ jobs:
             <script>
               mermaid.initialize({startOnLoad:false,theme:"base",themeVariables:{fontSize:"20px"}});
 
+              // Mermaid 渲染插件
               (function(){
                 var plugin=function(hook){
                   hook.doneEach(function(){
@@ -141,6 +139,7 @@ jobs:
                 window.$docsify.plugins=[].concat(window.$docsify.plugins||[],plugin);
               })();
 
+              // 自定义 TOC 渲染插件 + 防止侧边栏被污染
               (function(){
                 function renderTOC(){
                   var c=document.querySelector(".toc-nav");
@@ -170,10 +169,27 @@ jobs:
                     c.appendChild(a);
                   });
                 }
-                var p=function(hook){hook.doneEach(function(){setTimeout(renderTOC,100)})};
+
+                function cleanSidebar() {
+                  // 移除侧边栏中的 docsify-toc 内容
+                  var sidebar = document.querySelector(".sidebar-nav");
+                  if (!sidebar) return;
+                  var tocUl = sidebar.querySelector("ul.toc");
+                  if (tocUl) tocUl.remove();
+                }
+
+                var p=function(hook){
+                  hook.doneEach(function(){
+                    setTimeout(function(){
+                      cleanSidebar();
+                      renderTOC();
+                    }, 100);
+                  });
+                };
                 window.$docsify.plugins=[].concat(window.$docsify.plugins||[],p);
               })();
 
+              // 主题切换
               (function(){
                 var btn=document.getElementById("theme-toggle");
                 var link=document.querySelector("link[rel=stylesheet]");
