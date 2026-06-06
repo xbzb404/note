@@ -29,261 +29,227 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: main
-      
+
       - name: Prepare deploy files
         run: |
           mkdir -p deploy
-          
-          # 生成 index.html
-          echo '<!DOCTYPE html>' > deploy/index.html
-          echo '<html>' >> deploy/index.html
-          echo '<head>' >> deploy/index.html
-          echo '  <meta charset="UTF-8">' >> deploy/index.html
-          echo '  <title>HCIP学习笔记</title>' >> deploy/index.html
-          echo '  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">' >> deploy/index.html
-          echo '  <style>' >> deploy/index.html
-          echo '    /* 主题切换按钮 */' >> deploy/index.html
-          echo '    .theme-toggle {' >> deploy/index.html
-          echo '      position: fixed;' >> deploy/index.html
-          echo '      bottom: 24px;' >> deploy/index.html
-          echo '      right: 24px;' >> deploy/index.html
-          echo '      width: 46px;' >> deploy/index.html
-          echo '      height: 46px;' >> deploy/index.html
-          echo '      border-radius: 50%;' >> deploy/index.html
-          echo '      background: #2c6e9e;' >> deploy/index.html
-          echo '      color: white;' >> deploy/index.html
-          echo '      border: none;' >> deploy/index.html
-          echo '      cursor: pointer;' >> deploy/index.html
-          echo '      font-size: 20px;' >> deploy/index.html
-          echo '      box-shadow: 0 2px 12px rgba(0,0,0,0.15);' >> deploy/index.html
-          echo '      z-index: 110;' >> deploy/index.html
-          echo '      display: flex;' >> deploy/index.html
-          echo '      align-items: center;' >> deploy/index.html
-          echo '      justify-content: center;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .theme-toggle:hover {' >> deploy/index.html
-          echo '      opacity: 0.9;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '' >> deploy/index.html
-          echo '    /* 右侧大纲容器 - 固定在右侧 */' >> deploy/index.html
-          echo '    .toc-nav {' >> deploy/index.html
-          echo '      position: fixed !important;' >> deploy/index.html
-          echo '      right: 24px;' >> deploy/index.html
-          echo '      top: 80px;' >> deploy/index.html
-          echo '      width: 240px;' >> deploy/index.html
-          echo '      max-height: calc(100vh - 140px);' >> deploy/index.html
-          echo '      overflow-y: auto;' >> deploy/index.html
-          echo '      background: var(--bg-color, #f8f9fa);' >> deploy/index.html
-          echo '      border: 1px solid var(--border-color, #e0e0e0);' >> deploy/index.html
-          echo '      border-radius: 10px;' >> deploy/index.html
-          echo '      padding: 16px;' >> deploy/index.html
-          echo '      font-size: 13px;' >> deploy/index.html
-          echo '      box-shadow: 0 2px 12px rgba(0,0,0,0.06);' >> deploy/index.html
-          echo '      z-index: 90;' >> deploy/index.html
-          echo '      box-sizing: border-box;' >> deploy/index.html
-          echo '      pointer-events: auto;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '' >> deploy/index.html
-          echo '    /* 大纲标题 */' >> deploy/index.html
-          echo '    .toc-nav::before {' >> deploy/index.html
-          echo '      content: "📑 页面大纲";' >> deploy/index.html
-          echo '      display: block;' >> deploy/index.html
-          echo '      font-weight: 600;' >> deploy/index.html
-          echo '      font-size: 14px;' >> deploy/index.html
-          echo '      margin-bottom: 12px;' >> deploy/index.html
-          echo '      padding-bottom: 8px;' >> deploy/index.html
-          echo '      border-bottom: 1px solid var(--border-color, #e0e0e0);' >> deploy/index.html
-          echo '      color: var(--text-color, #2c3e50);' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '' >> deploy/index.html
-          echo '    .toc-nav a {' >> deploy/index.html
-          echo '      text-decoration: none;' >> deploy/index.html
-          echo '      color: var(--text-color, #2c3e50);' >> deploy/index.html
-          echo '      display: block;' >> deploy/index.html
-          echo '      padding: 4px 0 4px 10px;' >> deploy/index.html
-          echo '      border-left: 2px solid transparent;' >> deploy/index.html
-          echo '      transition: all 0.2s;' >> deploy/index.html
-          echo '      line-height: 1.5;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .toc-nav a:hover {' >> deploy/index.html
-          echo '      border-left-color: #2c6e9e;' >> deploy/index.html
-          echo '      color: #2c6e9e;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .toc-nav .lv2 {' >> deploy/index.html
-          echo '      margin-left: 0;' >> deploy/index.html
-          echo '      font-weight: 500;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .toc-nav .lv3 {' >> deploy/index.html
-          echo '      margin-left: 12px;' >> deploy/index.html
-          echo '      font-size: 12px;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .toc-nav .lv4 {' >> deploy/index.html
-          echo '      margin-left: 24px;' >> deploy/index.html
-          echo '      font-size: 12px;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .toc-nav .lv5 {' >> deploy/index.html
-          echo '      margin-left: 36px;' >> deploy/index.html
-          echo '      font-size: 12px;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '' >> deploy/index.html
-          echo '    /* 内容区域避开右侧大纲 */' >> deploy/index.html
-          echo '    .markdown-section {' >> deploy/index.html
-          echo '      margin-right: 280px;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '    .mermaid {' >> deploy/index.html
-          echo '      margin-right: 280px;' >> deploy/index.html
-          echo '      max-width: calc(100% - 280px);' >> deploy/index.html
-          echo '      overflow-x: auto;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '' >> deploy/index.html
-          echo '    /* 隐藏侧边栏中的大纲（防止 toc 注入到侧边栏） */' >> deploy/index.html
-          echo '    .sidebar-nav .toc {' >> deploy/index.html
-          echo '      display: none !important;' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '' >> deploy/index.html
-          echo '    /* 响应式：小屏幕隐藏右侧大纲 */' >> deploy/index.html
-          echo '    @media (max-width: 1200px) {' >> deploy/index.html
-          echo '      .toc-nav {' >> deploy/index.html
-          echo '        display: none !important;' >> deploy/index.html
-          echo '      }' >> deploy/index.html
-          echo '      .markdown-section,' >> deploy/index.html
-          echo '      .mermaid {' >> deploy/index.html
-          echo '        margin-right: 0;' >> deploy/index.html
-          echo '        max-width: 100%;' >> deploy/index.html
-          echo '      }' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '  </style>' >> deploy/index.html
-          echo '</head>' >> deploy/index.html
-          echo '<body>' >> deploy/index.html
-          echo '  <div id="app"></div>' >> deploy/index.html
-          echo '  <button class="theme-toggle" id="theme-toggle">🌙</button>' >> deploy/index.html
-          echo '  <script>' >> deploy/index.html
-          echo '    window.$docsify = {' >> deploy/index.html
-          echo '      name: "📝 HCIP学习笔记",' >> deploy/index.html
-          echo '      repo: "xbzb404/note",' >> deploy/index.html
-          echo '      loadSidebar: true,' >> deploy/index.html
-          echo '      subMaxLevel: 5,' >> deploy/index.html
-          echo '      search: {' >> deploy/index.html
-          echo '        placeholder: "🔍 搜索笔记",' >> deploy/index.html
-          echo '        noData: "😢 没有找到结果",' >> deploy/index.html
-          echo '        depth: 4' >> deploy/index.html
-          echo '      },' >> deploy/index.html
-          echo '      auto2top: true,' >> deploy/index.html
-          echo '      notFoundPage: true,' >> deploy/index.html
-          echo '      toc: {' >> deploy/index.html
-          echo '        tocMaxLevel: 5,' >> deploy/index.html
-          echo '        target: "h2, h3, h4, h5",' >> deploy/index.html
-          echo '        container: ".toc-nav",' >> deploy/index.html
-          echo '        ignoreHeaders: ["sidebar"]' >> deploy/index.html
-          echo '      }' >> deploy/index.html
-          echo '    }' >> deploy/index.html
-          echo '  </script>' >> deploy/index.html
-          echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>' >> deploy/index.html
-          echo '  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>' >> deploy/index.html
-          echo '  <script src="//unpkg.com/docsify-plugin-toc@1/dist/docsify-plugin-toc.min.js"></script>' >> deploy/index.html
-          echo '  <script src="//cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>' >> deploy/index.html
-          echo '  <script>' >> deploy/index.html
-          echo '    mermaid.initialize({' >> deploy/index.html
-          echo '      startOnLoad: false,' >> deploy/index.html
-          echo '      theme: "base",' >> deploy/index.html
-          echo '      themeVariables: { fontSize: "20px" }' >> deploy/index.html
-          echo '    });' >> deploy/index.html
-          echo '  </script>' >> deploy/index.html
-          echo '  <script>' >> deploy/index.html
-          echo '    // Mermaid 渲染插件' >> deploy/index.html
-          echo '    (function() {' >> deploy/index.html
-          echo '      var plugin = function(hook, vm) {' >> deploy/index.html
-          echo '        hook.doneEach(function() {' >> deploy/index.html
-          echo '          document.querySelectorAll("pre[data-lang=mermaid]").forEach(function(pre) {' >> deploy/index.html
-          echo '            var code = pre.textContent;' >> deploy/index.html
-          echo '            var div = document.createElement("div");' >> deploy/index.html
-          echo '            div.className = "mermaid";' >> deploy/index.html
-          echo '            div.textContent = code;' >> deploy/index.html
-          echo '            pre.parentNode.replaceChild(div, pre);' >> deploy/index.html
-          echo '          });' >> deploy/index.html
-          echo '          mermaid.run();' >> deploy/index.html
-          echo '        });' >> deploy/index.html
-          echo '      };' >> deploy/index.html
-          echo '      window.$docsify.plugins = [].concat(window.$docsify.plugins || [], plugin);' >> deploy/index.html
-          echo '    })();' >> deploy/index.html
-          echo '  </script>' >> deploy/index.html
-          echo '  <script>' >> deploy/index.html
-          echo '    // 主题切换功能' >> deploy/index.html
-          echo '    (function() {' >> deploy/index.html
-          echo '      var toggleBtn = document.getElementById("theme-toggle");' >> deploy/index.html
-          echo '      var themeLink = document.querySelector("link[rel=stylesheet]");' >> deploy/index.html
-          echo '      var savedTheme = localStorage.getItem("docsify-theme");' >> deploy/index.html
-          echo '      function setTheme(theme) {' >> deploy/index.html
-          echo '        if (theme === "dark") {' >> deploy/index.html
-          echo '          themeLink.href = "//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css";' >> deploy/index.html
-          echo '          toggleBtn.innerHTML = "☀️";' >> deploy/index.html
-          echo '          toggleBtn.style.background = "#1a2a2f";' >> deploy/index.html
-          echo '        } else {' >> deploy/index.html
-          echo '          themeLink.href = "//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css";' >> deploy/index.html
-          echo '          toggleBtn.innerHTML = "🌙";' >> deploy/index.html
-          echo '          toggleBtn.style.background = "#2c6e9e";' >> deploy/index.html
-          echo '        }' >> deploy/index.html
-          echo '        localStorage.setItem("docsify-theme", theme);' >> deploy/index.html
-          echo '      }' >> deploy/index.html
-          echo '      if (savedTheme === "dark") setTheme("dark");' >> deploy/index.html
-          echo '      else setTheme("light");' >> deploy/index.html
-          echo '      toggleBtn.addEventListener("click", function() {' >> deploy/index.html
-          echo '        var current = localStorage.getItem("docsify-theme");' >> deploy/index.html
-          echo '        setTheme(current === "dark" ? "light" : "dark");' >> deploy/index.html
-          echo '      });' >> deploy/index.html
-          echo '    })();' >> deploy/index.html
-          echo '  </script>' >> deploy/index.html
-          echo '</body>' >> deploy/index.html
-          echo '</html>' >> deploy/index.html
-          
+
+          python3 << 'PYEOF'
+          html = r'''<!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <title>HCIP学习笔记</title>
+            <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+            <style>
+              .theme-toggle {
+                position: fixed; bottom: 24px; right: 24px;
+                width: 46px; height: 46px; border-radius: 50%;
+                background: #2c6e9e; color: white; border: none;
+                cursor: pointer; font-size: 20px; z-index: 110;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+                display: flex; align-items: center; justify-content: center;
+              }
+              .theme-toggle:hover { opacity: 0.9; }
+
+              .toc-nav {
+                position: fixed !important; right: 24px; top: 80px;
+                width: 240px; max-height: calc(100vh - 140px);
+                overflow-y: auto; z-index: 90;
+                background: var(--bg-color, #f8f9fa);
+                border: 1px solid var(--border-color, #e0e0e0);
+                border-radius: 10px; padding: 16px; font-size: 13px;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+                box-sizing: border-box; pointer-events: auto;
+              }
+              .toc-nav::before {
+                content: "📑 页面大纲"; display: block;
+                font-weight: 600; font-size: 14px; margin-bottom: 12px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid var(--border-color, #e0e0e0);
+                color: var(--text-color, #2c3e50);
+              }
+              .toc-nav a {
+                text-decoration: none; color: var(--text-color, #2c3e50);
+                display: block; padding: 4px 0 4px 10px;
+                border-left: 2px solid transparent;
+                transition: all 0.2s; line-height: 1.5;
+              }
+              .toc-nav a:hover { border-left-color: #2c6e9e; color: #2c6e9e; }
+              .toc-nav .lv2 { margin-left: 0; font-weight: 500; }
+              .toc-nav .lv3 { margin-left: 12px; font-size: 12px; }
+              .toc-nav .lv4 { margin-left: 24px; font-size: 12px; }
+              .toc-nav .lv5 { margin-left: 36px; font-size: 12px; }
+
+              .markdown-section { margin-right: 280px; }
+              .mermaid {
+                margin-right: 280px;
+                max-width: calc(100% - 280px);
+                overflow-x: auto;
+              }
+
+              @media (max-width: 1200px) {
+                .toc-nav { display: none !important; }
+                .markdown-section, .mermaid {
+                  margin-right: 0; max-width: 100%;
+                }
+              }
+            </style>
+          </head>
+          <body>
+            <div id="app"></div>
+            <button class="theme-toggle" id="theme-toggle">🌙</button>
+
+            <script>
+              window.$docsify = {
+                name: "📝 HCIP学习笔记",
+                repo: "xbzb404/note",
+                loadSidebar: true,
+                subMaxLevel: 5,
+                search: {
+                  placeholder: "🔍 搜索笔记",
+                  noData: "😢 没有找到结果",
+                  depth: 4
+                },
+                auto2top: true,
+                notFoundPage: true
+              }
+            </script>
+
+            <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+            <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+            <script src="//cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+            <script>
+              mermaid.initialize({startOnLoad:false,theme:"base",themeVariables:{fontSize:"20px"}});
+
+              (function(){
+                var plugin=function(hook){
+                  hook.doneEach(function(){
+                    document.querySelectorAll("pre[data-lang=mermaid]").forEach(function(pre){
+                      var div=document.createElement("div");
+                      div.className="mermaid";
+                      div.textContent=pre.textContent;
+                      pre.parentNode.replaceChild(div,pre);
+                    });
+                    mermaid.run();
+                  });
+                };
+                window.$docsify.plugins=[].concat(window.$docsify.plugins||[],plugin);
+              })();
+
+              (function(){
+                function renderTOC(){
+                  var c=document.querySelector(".toc-nav");
+                  if(!c)return;
+                  c.querySelectorAll("a,div").forEach(function(e){e.remove()});
+                  var m=document.querySelector(".markdown-section");
+                  if(!m)return;
+                  var hs=m.querySelectorAll("h2,h3,h4,h5");
+                  if(hs.length===0){
+                    var emp=document.createElement("div");
+                    emp.style.cssText="color:#999;font-size:12px;padding:8px 0;";
+                    emp.textContent="暂无大纲";
+                    c.appendChild(emp);
+                    return;
+                  }
+                  hs.forEach(function(h){
+                    if(!h.id)h.id=h.textContent.replace(/\s+/g,"-").toLowerCase();
+                    var lv=parseInt(h.tagName.substring(1));
+                    var a=document.createElement("a");
+                    a.href="#"+h.id;
+                    a.textContent=h.textContent;
+                    a.className="lv"+lv;
+                    a.addEventListener("click",function(e){
+                      e.preventDefault();
+                      h.scrollIntoView({behavior:"smooth"});
+                    });
+                    c.appendChild(a);
+                  });
+                }
+                var p=function(hook){hook.doneEach(function(){setTimeout(renderTOC,100)})};
+                window.$docsify.plugins=[].concat(window.$docsify.plugins||[],p);
+              })();
+
+              (function(){
+                var btn=document.getElementById("theme-toggle");
+                var link=document.querySelector("link[rel=stylesheet]");
+                var saved=localStorage.getItem("docsify-theme");
+                function set(t){
+                  if(t==="dark"){
+                    link.href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css";
+                    btn.innerHTML="☀️";
+                    btn.style.background="#1a2a2f";
+                  }else{
+                    link.href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css";
+                    btn.innerHTML="🌙";
+                    btn.style.background="#2c6e9e";
+                  }
+                  localStorage.setItem("docsify-theme",t);
+                }
+                set(saved==="dark"?"dark":"light");
+                btn.addEventListener("click",function(){
+                  set(localStorage.getItem("docsify-theme")==="dark"?"light":"dark");
+                });
+              })();
+            </script>
+          </body>
+          </html>'''
+
+          with open('deploy/index.html', 'w', encoding='utf-8') as f:
+              f.write(html)
+          print("✅ index.html 已生成")
+          PYEOF
+
           # 复制笔记文件
           cp -r main/*.md main/实验 main/课堂随笔 main/*.assets deploy/ 2>/dev/null || true
-          
+
           # 生成侧边栏
-          echo "- **📁 笔记**" > deploy/_sidebar.md
-          
-          cd main
-          for file in $(ls *.md 2>/dev/null | grep -v "README\|_sidebar" | sort); do
-            name=$(basename "$file" .md)
-            echo "  - [$name]($file)" >> ../deploy/_sidebar.md
-          done
-          
-          if [ -d "实验" ]; then
-            echo "" >> ../deploy/_sidebar.md
-            echo "- **🧪 实验**" >> ../deploy/_sidebar.md
-            for file in $(ls 实验/*.md 2>/dev/null | sort); do
-              name=$(basename "$file" .md)
-              echo "  - [$name](实验/$(basename "$file"))" >> ../deploy/_sidebar.md
-            done
-          fi
-          
-          if [ -d "课堂随笔" ]; then
-            echo "" >> ../deploy/_sidebar.md
-            echo "- **📒 课堂随笔**" >> ../deploy/_sidebar.md
-            for file in $(ls 课堂随笔/*.md 2>/dev/null | sort); do
-              name=$(basename "$file" .md)
-              echo "  - [$name](课堂随笔/$(basename "$file"))" >> ../deploy/_sidebar.md
-            done
-          fi
-          
-          if [ -f "README.md" ]; then
-            echo "" >> ../deploy/_sidebar.md
-            echo "- **ℹ️ 关于**" >> ../deploy/_sidebar.md
-            echo "  - [首页](README.md)" >> ../deploy/_sidebar.md
-          fi
-          cd ..
-          
-          # 给子目录也复制侧边栏，解决 404 问题
-          if [ -d "deploy/实验" ]; then
-            cp deploy/_sidebar.md deploy/实验/_sidebar.md
-          fi
-          if [ -d "deploy/课堂随笔" ]; then
-            cp deploy/_sidebar.md deploy/课堂随笔/_sidebar.md
-          fi
-          
+          python3 << 'PYEOF'
+          import os
+
+          lines = ["- **📁 笔记**"]
+          main_dir = "main"
+
+          # 根目录 md 文件
+          for f in sorted(os.listdir(main_dir)):
+              if f.endswith(".md") and f not in ("README.md", "_sidebar.md"):
+                  name = f[:-3]
+                  lines.append(f"  - [{name}]({f})")
+
+          # 子目录
+          for sub, icon in [("实验", "🧪"), ("课堂随笔", "📒")]:
+              sub_path = os.path.join(main_dir, sub)
+              if os.path.isdir(sub_path):
+                  lines.append("")
+                  lines.append(f"- **{icon} {sub}**")
+                  for f in sorted(os.listdir(sub_path)):
+                      if f.endswith(".md"):
+                          name = f[:-3]
+                          lines.append(f"  - [{name}]({sub}/{f})")
+
+          # README
+          if os.path.exists(os.path.join(main_dir, "README.md")):
+              lines.append("")
+              lines.append("- **ℹ️ 关于**")
+              lines.append("  - [首页](README.md)")
+
+          with open("deploy/_sidebar.md", "w", encoding="utf-8") as f:
+              f.write("\n".join(lines))
+
+          # 复制到子目录
+          for sub in ["实验", "课堂随笔"]:
+              sub_deploy = os.path.join("deploy", sub)
+              if os.path.isdir(sub_deploy):
+                  with open(os.path.join(sub_deploy, "_sidebar.md"), "w", encoding="utf-8") as f:
+                      f.write("\n".join(lines))
+
+          print("✅ _sidebar.md 已生成")
+          PYEOF
+
           echo "✅ 部署文件已准备"
           ls -la deploy/
-      
+
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -291,15 +257,15 @@ jobs:
           publish_dir: ./deploy
           publish_branch: gh-pages
           force_orphan: true
-      
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
-      
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: deploy
-      
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
