@@ -159,7 +159,7 @@ route-policy test1 permit node 10
 
 **route-policy**：既能匹配也能修改，功能最强大。匹配掩码长度时可以引用 ip-prefix 来配合。
 
-**filter-policy**：IGP 专用，只过滤路由不修改属性；OSPF 中 import 不过滤 LSA（重点考点）。
+**filter-policy**：IGP 专用，只过滤路由不修改属性；OSPF 中 import 不过滤 LSA（核心重点）。
 
 ## 六、一句话速记
 
@@ -185,26 +185,3 @@ ACL 只能匹配 IP 范围，不能匹配掩码；IP-Prefix 能同时匹配 IP +
 **Q3：Route-Policy 中 deny 节点匹配成功后，apply 子句会不会执行？为什么？**
 
 A：不会执行。因为 deny 节点的动作是"拒绝路由"，路由已经被丢弃了，再修改它的属性没有任何意义。
-
-**原理解释**：
-
-```
-route-policy RP deny node 10
- if-match ip-prefix P1
- apply cost 100        ← 这行不会执行！
-```
-
-
-
-匹配流程：
-
-1. 路由匹配了 P1 → 命中 node 10
-2. node 10 的动作是 **deny** → 路由直接被拒绝
-3. apply cost 100 **根本不执行**——路由都没了，改给谁看？
-
-**与 permit 的对比**：
-
-| 节点模式   | 匹配后行为 | apply 是否执行 |
-| :--------- | :--------- | :------------- |
-| **permit** | 路由通过   | ✅ 执行         |
-| **deny**   | 路由被拒绝 | ❌ 不执行       |
