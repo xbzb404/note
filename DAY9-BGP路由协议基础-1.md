@@ -164,7 +164,9 @@ Connect → (连接失败) → Active → (重试超时) → Connect（反复循
 | `undo default ipv4-unicast`                 | 关闭默认IPv4单播地址族（配置多地址族时使用）                 |
 
 ```text
-# 4. 配置BGP（完整版）
+#配置BGP示例
+#预先使用ping -a 源IP 目的IP 测试两边接口地址是否可通信
+
 bgp 100
  router-id 2.2.2.2
  peer 1.1.1.1 as-number 100          # 指定邻居的Loopback IP和AS
