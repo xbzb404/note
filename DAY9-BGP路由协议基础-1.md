@@ -196,3 +196,8 @@ bgp 100
 4. 注意iBGP水平分割限制，合理规划Full-mesh或RR
 5. eBGP多跳场景需修改TTL（`peer x.x.x.x ebgp-max-hop`）
 
+
+
+ 思考题：如何解决ebgp的环路？
+
+使用路径属性将路由进行标记as，当路由回来发现是自己的as标签，就不接受。（AS Path）
