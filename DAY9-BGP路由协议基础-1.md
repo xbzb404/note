@@ -162,6 +162,7 @@ Connect → (连接失败) → Active → (重试超时) → Connect（反复循
 | `display bgp routing-table`                 | 查看BGP路由表                                                |
 | `refresh bgp all import`                    | 手动刷新路由（请求邻居重新发送）                             |
 | `undo default ipv4-unicast`                 | 关闭默认IPv4单播地址族（配置多地址族时使用）                 |
+| `peer x.x.x.x next-hop-local`               | **修改BGP路由的下一跳为本设备地址**                          |
 
 ```text
 #配置BGP示例
@@ -177,6 +178,16 @@ bgp 100
   network 172.16.1.0 255.255.255.0   # 宣告本地网段
   peer 1.1.1.1 enable                # 在IPv4地址族中激活该邻居
 ```
+
+#### `peer x.x.x.x next-hop-local`
+
+- **作用**：将通告给邻居的BGP路由的下一跳修改为本设备地址。
+- **为什么用**：IBGP传递EBGP路由时默认保留原始下一跳（外部AS接口IP），该地址在本AS内IGP中不可达，会导致**路由黑洞**。修改后下一跳为本设备Loopback/接口IP（IGP可达），消除黑洞。
+- **配置位置**：**路由发送端**（谁把路由传给邻居，谁配置）。
+- **华为**：`peer x.x.x.x next-hop-local` / **思科**：`neighbor x.x.x.x next-hop-self`
+- **适用场景**：IBGP邻居（尤其跨多跳、用Loopback建邻居时）必配；EBGP邻居间一般不配。
+
+
 
 ------
 
