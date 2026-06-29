@@ -28,11 +28,11 @@ Area 0 -- Area 1 （VLink）--Area 2
 
 ​	类似于VPN的机制，不可靠，作为临时方案来使用，长期情况绝对不能使用！
 
-![image-20260601191535874](DAY4-OSPF-VLink-特殊区域详解随笔.assets/image-20260601191535874.png)
+![image-20260601191535874](DAY04-OSPF-VLink-特殊区域详解随笔.assets/image-20260601191535874.png)
 
 
 
-![image-20260601192850517](DAY4-OSPF-VLink-特殊区域详解随笔.assets/image-20260601192850517.png)
+![image-20260601192850517](DAY04-OSPF-VLink-特殊区域详解随笔.assets/image-20260601192850517.png)
 
 如何配置？
 
@@ -60,7 +60,7 @@ display ospf vlink
 
 ### 2.外部LSA
 
-![image-20260601195249323](DAY4-OSPF-VLink-特殊区域详解随笔.assets/image-20260601195249323.png)
+![image-20260601195249323](DAY04-OSPF-VLink-特殊区域详解随笔.assets/image-20260601195249323.png)
 
 LSA 5 ：
 

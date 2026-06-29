@@ -1,6 +1,6 @@
 # DAY9：BGP邻居建立实验
 
-![image-20260623004240340](DAY9-BGP邻居建立实验.assets/image-20260623004240340.png)
+![image-20260623004240340](DAY09-BGP邻居建立实验.assets/image-20260623004240340.png)
 
 拓扑如上
 
@@ -45,23 +45,23 @@ ipv4-family unicast
 
 邻居建立结果
 
-![image-20260623004619735](DAY9-BGP邻居建立实验.assets/image-20260623004619735.png)
+![image-20260623004619735](DAY09-BGP邻居建立实验.assets/image-20260623004619735.png)
 
-![image-20260623004641238](DAY9-BGP邻居建立实验.assets/image-20260623004641238.png)
+![image-20260623004641238](DAY09-BGP邻居建立实验.assets/image-20260623004641238.png)
 
-![image-20260623004656528](DAY9-BGP邻居建立实验.assets/image-20260623004656528.png)
+![image-20260623004656528](DAY09-BGP邻居建立实验.assets/image-20260623004656528.png)
 
-![image-20260623004712902](DAY9-BGP邻居建立实验.assets/image-20260623004712902.png)
+![image-20260623004712902](DAY09-BGP邻居建立实验.assets/image-20260623004712902.png)
 
 路由传播情况
 
-![image-20260623004745297](DAY9-BGP邻居建立实验.assets/image-20260623004745297.png)
+![image-20260623004745297](DAY09-BGP邻居建立实验.assets/image-20260623004745297.png)
 
-![image-20260623004810138](DAY9-BGP邻居建立实验.assets/image-20260623004810138.png)
+![image-20260623004810138](DAY09-BGP邻居建立实验.assets/image-20260623004810138.png)
 
-![image-20260623004836101](DAY9-BGP邻居建立实验.assets/image-20260623004836101.png)
+![image-20260623004836101](DAY09-BGP邻居建立实验.assets/image-20260623004836101.png)
 
-![image-20260623004912438](DAY9-BGP邻居建立实验.assets/image-20260623004912438.png)
+![image-20260623004912438](DAY09-BGP邻居建立实验.assets/image-20260623004912438.png)
 
 可以看到由于水平分割的防护机制，处在AS100但不与AR1建立IBGP邻居的AR4就收不到来自AR1的宣告路由
 
@@ -85,7 +85,7 @@ bgp 100
 
 配置后，可以看到路由被传播到AR4了
 
-![image-20260623005816305](DAY9-BGP邻居建立实验.assets/image-20260623005816305.png)
+![image-20260623005816305](DAY09-BGP邻居建立实验.assets/image-20260623005816305.png)
 
 可以在AR2上增加配置使外部网络宣告的路由在IBGP之间有效（边界路由器）
 
@@ -98,8 +98,8 @@ bgp 100
 refresh bgp all export
 ```
 
-![image-20260623010603806](DAY9-BGP邻居建立实验.assets/image-20260623010603806.png)
+![image-20260623010603806](DAY09-BGP邻居建立实验.assets/image-20260623010603806.png)
 
-![image-20260623010620460](DAY9-BGP邻居建立实验.assets/image-20260623010620460.png)
+![image-20260623010620460](DAY09-BGP邻居建立实验.assets/image-20260623010620460.png)
 
 可以看到已经有效了

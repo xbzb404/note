@@ -4,7 +4,7 @@
 
 #### 1. VLink实验一：area 0被分割，使用虚连接将其连接
 
-![image-20260601214824120](DAY4-VLink-特殊区域实验.assets/image-20260601214824120.png)
+![image-20260601214824120](DAY04-VLink-特殊区域实验.assets/image-20260601214824120.png)
 
 AR1
 
@@ -78,17 +78,17 @@ ospf 1 router-id 4.4.4.4
 
 可以看到AR2-AR3互建邻居为FULL
 
-![image-20260601215751989](DAY4-VLink-特殊区域实验.assets/image-20260601215751989.png)
+![image-20260601215751989](DAY04-VLink-特殊区域实验.assets/image-20260601215751989.png)
 
-![image-20260601215828369](DAY4-VLink-特殊区域实验.assets/image-20260601215828369.png)
+![image-20260601215828369](DAY04-VLink-特殊区域实验.assets/image-20260601215828369.png)
 
 
 
 #### 2.VLink实验二：区域2、3都需要Vlink到area0
 
-![image-20260601192850517](DAY4-VLink-特殊区域实验.assets/image-20260601192850517.png)
+![image-20260601192850517](DAY04-VLink-特殊区域实验.assets/image-20260601192850517.png)
 
-![image-20260601223208801](DAY4-VLink-特殊区域实验.assets/image-20260601223208801.png)
+![image-20260601223208801](DAY04-VLink-特殊区域实验.assets/image-20260601223208801.png)
 
 AR1
 
@@ -185,11 +185,11 @@ ospf 1 router-id 4.4.4.4
 
 可以看到AR2-AR3，AR3-AR4互建邻居为FULL
 
-![image-20260601222832842](DAY4-VLink-特殊区域实验.assets/image-20260601222832842.png)
+![image-20260601222832842](DAY04-VLink-特殊区域实验.assets/image-20260601222832842.png)
 
-![image-20260601222909492](DAY4-VLink-特殊区域实验.assets/image-20260601222909492.png)
+![image-20260601222909492](DAY04-VLink-特殊区域实验.assets/image-20260601222909492.png)
 
-![image-20260601222931948](DAY4-VLink-特殊区域实验.assets/image-20260601222931948.png)
+![image-20260601222931948](DAY04-VLink-特殊区域实验.assets/image-20260601222931948.png)
 
 
 
@@ -271,9 +271,9 @@ ospf 1 router-id 4.4.4.4
 
 可以看到有默认路由和路由明细
 
-![image-20260601232016427](DAY4-VLink-特殊区域实验.assets/image-20260601232016427.png)
+![image-20260601232016427](DAY04-VLink-特殊区域实验.assets/image-20260601232016427.png)
 
-![image-20260601232500288](DAY4-VLink-特殊区域实验.assets/image-20260601232500288.png)
+![image-20260601232500288](DAY04-VLink-特殊区域实验.assets/image-20260601232500288.png)
 
 #### 2.实验二：Totally Stub
 
@@ -305,9 +305,9 @@ ospf 1 router-id 4.4.4.4
 
 可以看到有默认路由，路由明细没有了
 
-![image-20260601233839241](DAY4-VLink-特殊区域实验.assets/image-20260601233839241.png)
+![image-20260601233839241](DAY04-VLink-特殊区域实验.assets/image-20260601233839241.png)
 
-![image-20260601233921736](DAY4-VLink-特殊区域实验.assets/image-20260601233921736.png)
+![image-20260601233921736](DAY04-VLink-特殊区域实验.assets/image-20260601233921736.png)
 
 #### 3.实验三：NSSA
 
@@ -367,15 +367,15 @@ AR3（ABR）在Area2（NSSA域）内发送LSA7类型的默认路由指向3.3.3.3
 
 AR2（ABR）会将area0中的LSA5在Area1中传播，并同时生成对应的LSA4，指向AR3（ABR）
 
-![image-20260602002241220](DAY4-VLink-特殊区域实验.assets/image-20260602002241220.png)
+![image-20260602002241220](DAY04-VLink-特殊区域实验.assets/image-20260602002241220.png)
 
-![image-20260602002323348](DAY4-VLink-特殊区域实验.assets/image-20260602002323348.png)
+![image-20260602002323348](DAY04-VLink-特殊区域实验.assets/image-20260602002323348.png)
 
-![image-20260602000725090](DAY4-VLink-特殊区域实验.assets/image-20260602000725090.png)
+![image-20260602000725090](DAY04-VLink-特殊区域实验.assets/image-20260602000725090.png)
 
-![image-20260602000817654](DAY4-VLink-特殊区域实验.assets/image-20260602000817654.png)
+![image-20260602000817654](DAY04-VLink-特殊区域实验.assets/image-20260602000817654.png)
 
-![image-20260602002218438](DAY4-VLink-特殊区域实验.assets/image-20260602002218438.png)
+![image-20260602002218438](DAY04-VLink-特殊区域实验.assets/image-20260602002218438.png)
 
 #### 4.实验四：Totally NSSA
 
@@ -387,6 +387,6 @@ AR2（ABR）会将area0中的LSA5在Area1中传播，并同时生成对应的LSA
 
 结果可以看到Sum-Net 的LSA3（路由明细）没有了，其他的都相同
 
-![image-20260602001655949](DAY4-VLink-特殊区域实验.assets/image-20260602001655949.png)
+![image-20260602001655949](DAY04-VLink-特殊区域实验.assets/image-20260602001655949.png)
 
-![image-20260602001730948](DAY4-VLink-特殊区域实验.assets/image-20260602001730948.png)
+![image-20260602001730948](DAY04-VLink-特殊区域实验.assets/image-20260602001730948.png)

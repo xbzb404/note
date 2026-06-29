@@ -48,7 +48,7 @@ default-route-advertise always avoid-learning ##向ISIS区域发布默认路由
 
 
 
-![image-20260615191143003](DAY7-ISIS详解-3-随笔.assets/image-20260615191143003.png)
+![image-20260615191143003](DAY07-ISIS详解-3-随笔.assets/image-20260615191143003.png)
 
 
 

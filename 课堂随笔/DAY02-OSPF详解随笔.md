@@ -332,4 +332,4 @@ ospf 1 router-id 2.2.2.2
 
 
 
-![image-20260527215855136](DAY2-OSPF详解随笔.assets/image-20260527215855136.png)
+![image-20260527215855136](DAY02-OSPF详解随笔.assets/image-20260527215855136.png)
