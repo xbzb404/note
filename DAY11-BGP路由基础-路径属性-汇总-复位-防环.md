@@ -248,7 +248,7 @@ ip ip-prefix test1 permit 172.16.3.0 24
 route-policy test1 permit node 10
  if-match ip-prefix test1
 
-bgp 65001
+bgp 100
  aggregate 172.16.0.0 255.255.0.0 origin-policy test1
 ```
 
