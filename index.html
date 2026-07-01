@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>HCIP学习笔记</title>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <style>
+    .theme-toggle {
+      position: fixed; bottom: 24px; right: 24px;
+      width: 46px; height: 46px; border-radius: 50%;
+      background: #2c6e9e; color: white; border: none;
+      cursor: pointer; font-size: 20px; z-index: 110;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .theme-toggle:hover { opacity: 0.9; }
+
+    .toc-nav {
+      position: fixed !important; right: 24px; top: 80px;
+      width: 240px; max-height: calc(100vh - 140px);
+      overflow-y: auto; z-index: 90;
+      background: var(--bg-color, #f8f9fa);
+      border: 1px solid var(--border-color, #e0e0e0);
+      border-radius: 10px; padding: 16px; font-size: 13px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      box-sizing: border-box; pointer-events: auto;
+    }
+    .toc-nav::before {
+      content: "📑 页面大纲"; display: block;
+      font-weight: 600; font-size: 14px; margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color, #e0e0e0);
+      color: var(--text-color, #2c3e50);
+    }
+    .toc-nav a {
+      text-decoration: none; color: var(--text-color, #2c3e50);
+      display: block; padding: 4px 0 4px 10px;
+      border-left: 2px solid transparent;
+      transition: all 0.2s; line-height: 1.5;
+    }
+    .toc-nav a:hover { border-left-color: #2c6e9e; color: #2c6e9e; }
+    .toc-nav .lv2 { margin-left: 0; font-weight: 500; }
+    .toc-nav .lv3 { margin-left: 12px; font-size: 12px; }
+    .toc-nav .lv4 { margin-left: 24px; font-size: 12px; }
+    .toc-nav .lv5 { margin-left: 36px; font-size: 12px; }
+
+    .markdown-section { margin-right: 280px; }
+    .mermaid {
+      margin-right: 280px;
+      max-width: calc(100% - 280px);
+      overflow-x: auto;
+    }
+
+    @media (max-width: 1200px) {
+      .toc-nav { display: none !important; }
+      .markdown-section, .mermaid {
+        margin-right: 0; max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <button class="theme-toggle" id="theme-toggle">🌙</button>
+
+  <script>
+    window.$docsify = {
+      name: "📝 HCIP学习笔记",
+      repo: "xbzb404/note",
+      loadSidebar: true,
+      subMaxLevel: 0,
+      search: {
+        placeholder: "🔍 搜索笔记",
+        noData: "😢 没有找到结果",
+        depth: 4
+      },
+      auto2top: true,
+      notFoundPage: true,
+      toc: {
+        tocMaxLevel: 5,
+        target: "h2, h3, h4, h5",
+        container: ".toc-nav"
+      }
+    }
+  </script>
+
+  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-plugin-toc@1/dist/docsify-plugin-toc.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    mermaid.initialize({startOnLoad:false,theme:"base",themeVariables:{fontSize:"20px"}});
+
+    (function(){
+      var plugin=function(hook){
+        hook.doneEach(function(){
+          document.querySelectorAll("pre[data-lang=mermaid]").forEach(function(pre){
+            var div=document.createElement("div");
+            div.className="mermaid";
+            div.textContent=pre.textContent;
+            pre.parentNode.replaceChild(div,pre);
+          });
+          mermaid.run();
+        });
+      };
+      window.$docsify.plugins=[].concat(window.$docsify.plugins||[],plugin);
+    })();
+
+    (function(){
+      var btn=document.getElementById("theme-toggle");
+      var link=document.querySelector("link[rel=stylesheet]");
+      var saved=localStorage.getItem("docsify-theme");
+      function set(t){
+        if(t==="dark"){
+          link.href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css";
+          btn.innerHTML="☀️";
+          btn.style.background="#1a2a2f";
+        }else{
+          link.href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css";
+          btn.innerHTML="🌙";
+          btn.style.background="#2c6e9e";
+        }
+        localStorage.setItem("docsify-theme",t);
+      }
+      set(saved==="dark"?"dark":"light");
+      btn.addEventListener("click",function(){
+        set(localStorage.getItem("docsify-theme")==="dark"?"light":"dark");
+      });
+    })();
+  </script>
+</body>
+</html>
