@@ -90,19 +90,19 @@ bgp 64512
 
 P(Pre_V) L(Local_P) L（Local）A(AS_Path) O（Origin） M（MED） E（EBGP） N（Next_hop））
 
-| 规则 | 属性                        | 优选条件                               | 适用范围                 |
-| ---- | --------------------------- | -------------------------------------- | ------------------------ |
-| 1    | `Preferred_Value`           | 越大越优                               | **华为私有，仅本地有效** |
-| 2    | `Local_Preference`          | 越大越优                               | 仅IBGP内传播             |
-| 3    | 本地始发路由                | 手工汇总 > 自动汇总 > network > import | 本地始发                 |
-| 4    | `AS_Path`                   | **越短越优**                           | 公认必遵                 |
-| 5    | `Origin`                    | IGP > EGP > Incomplete                 | 公认必遵                 |
-| 6    | `MED`                       | **越小越优**                           | 可选非过渡，跨AS传递     |
-| 7    | 路由类型                    | EBGP > IBGP                            | —                        |
-| 8    | `Next_Hop`的IGP度量         | 度量值越小越优                         | 依赖底层IGP              |
-| 9    | `Cluster_List`              | 越短越优                               | RR场景                   |
-| 10   | `Router-ID / Originator_ID` | 最小者优                               | —                        |
-| 11   | Peer IP地址                 | 最小IP优                               | 最终PK                   |
+| 规则 | 属性                        | 优选条件                                         | 适用范围                 |
+| ---- | --------------------------- | ------------------------------------------------ | ------------------------ |
+| 1    | `Preferred_Value`           | 越大越优                                         | **华为私有，仅本地有效** |
+| 2    | `Local_Preference`          | 越大越优                                         | 仅IBGP内传播             |
+| 3    | 本地始发路由                | 手工汇总 > 自动汇总 > network > import           | 本地始发                 |
+| 4    | `AS_Path`                   | **越短越优**                                     | 公认必遵                 |
+| 5    | `Origin`                    | IGP > EGP > Incomplete                           | 公认必遵                 |
+| 6    | `MED`                       | **越小越优**                                     | 可选非过渡，跨AS传递     |
+| 7    | 路由类型                    | EBGP > IBGP                                      | —                        |
+| 8    | `Next_Hop`的IGP度量         | 度量值越小越优                                   | 依赖底层IGP              |
+| 9    | `Cluster_List`              | 越短越优                                         | RR场景                   |
+| 10   | `Router-ID / Originator_ID` | 最小者优（有`Originator_ID`就不考虑`Router-ID`） | —                        |
+| 11   | Peer IP地址                 | 最小IP优                                         | 最终PK                   |
 
 > 规则9-11属于“强制选路”，仅在前8条无法决出时启用。
 
