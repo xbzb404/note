@@ -243,7 +243,7 @@ RT（Route Target）决定 VPNv4 路由到达对端 PE 后，**该导入哪个 V
 > **RD vs RT 总结**：**RD 做唯一性区分，RT 做分发控制。** RT 不能解决 VPNv4 路由冲突问题。
 
 
-## 五、RT 配置示例（VPNX / VPNY）
+## 五、RT 配置示例（VPNA / VPNB）
 
 ### 5.1 配置逻辑图
 
@@ -251,12 +251,12 @@ RT（Route Target）决定 VPNv4 路由到达对端 PE 后，**该导入哪个 V
 
 ```
 PE1:
-  VPNX: RD 100:1,  Export 100:10,  Import 100:20
-  VPNY: RD 100:2,  Export 100:30,  Import 100:40
+  VPNA: RD 100:1,  Export 100:10,  Import 100:20
+  VPNB: RD 100:2,  Export 100:30,  Import 100:40
 
 PE2:
-  VPNX: RD 100:3,  Export 100:20,  Import 100:10
-  VPNY: RD 100:4,  Export 100:40,  Import 100:30
+  VPNA: RD 100:3,  Export 100:20,  Import 100:10
+  VPNB: RD 100:4,  Export 100:40,  Import 100:30
 ```
 
 
@@ -265,15 +265,15 @@ PE2:
 **PE1 配置：**
 
 ```text
-# VPNX
-ip vpn-instance VPNX
+# VPNA
+ip vpn-instance VPNA
  ipv4-family
   route-distinguisher 100:1
   vpn-target 100:10 export-extcommunity
   vpn-target 100:20 import-extcommunity
 
-# VPNY
-ip vpn-instance VPNY
+# VPNB
+ip vpn-instance VPNB
  ipv4-family
   route-distinguisher 100:2
   vpn-target 100:30 export-extcommunity
@@ -281,26 +281,26 @@ ip vpn-instance VPNY
 
 # 绑定接口
 interface GigabitEthernet0/0/1
- ip binding vpn-instance VPNX
+ ip binding vpn-instance VPNA
  ip address 192.168.1.1 255.255.255.0
 
 interface GigabitEthernet0/0/2
- ip binding vpn-instance VPNY
+ ip binding vpn-instance VPNB
  ip address 172.16.1.1 255.255.255.0
 ```
 
 **PE2 配置：**
 
 ```text
-# VPNX
-ip vpn-instance VPNX
+# VPNA
+ip vpn-instance VPNA
  ipv4-family
   route-distinguisher 100:3
   vpn-target 100:10 import-extcommunity
   vpn-target 100:20 export-extcommunity
 
-# VPNY
-ip vpn-instance VPNY
+# VPNB
+ip vpn-instance VPNB
  ipv4-family
   route-distinguisher 100:4
   vpn-target 100:30 import-extcommunity
@@ -308,11 +308,11 @@ ip vpn-instance VPNY
 
 # 绑定接口
 interface GigabitEthernet0/0/1
- ip binding vpn-instance VPNX
+ ip binding vpn-instance VPNA
  ip address 192.168.1.1 255.255.255.0
 
 interface GigabitEthernet0/0/2
- ip binding vpn-instance VPNY
+ ip binding vpn-instance VPNB
  ip address 172.16.1.1 255.255.255.0
 ```
 
@@ -321,10 +321,10 @@ interface GigabitEthernet0/0/2
 
 | VPN实例  | PE1 Export | PE2 Import  | PE2 Export | PE1 Import  |
 | :------- | :--------- | :---------- | :--------- | :---------- |
-| **VPNX** | 100:10 →   | 匹配 100:10 | 100:20 →   | 匹配 100:20 |
-| **VPNY** | 100:30 →   | 匹配 100:30 | 100:40 →   | 匹配 100:40 |
+| **VPNA** | 100:10 →   | 匹配 100:10 | 100:20 →   | 匹配 100:20 |
+| **VPNB** | 100:30 →   | 匹配 100:30 | 100:40 →   | 匹配 100:40 |
 
-VPNX 和 VPNY 使用不同的 RT 值，路由互不泄露。
+VPNA 和 VPNB 使用不同的 RT 值，路由互不泄露。
 
 
 
@@ -391,23 +391,72 @@ VPNX 和 VPNY 使用不同的 RT 值，路由互不泄露。
 
 ### 6.3 详细配置步骤
 
-拓扑：CE1 — PE1 — P1 — PE2 — CE2，VPN实例：VPNX、VPNY
+拓扑：
+
+```
+CE1 \ 				/CE3
+	PE1 — P1 — PE2 			，VPN实例：VPNA、VPNB
+CE2 /				\CE4
+```
+
+
+
+### MPLS L3VPN 跨站点互通配置
+
+#### 组网拓扑
+
+```
+CE1 ─── PE1 ─── P1 ─── PE2 ─── CE3
+CE2 ─── PE1                  PE2 ─── CE4
+```
+
+- **VPN 实例**：VPNA（CE1-CE3）、VPNB（CE2-CE4）
+- **公网底层**：OSPF + MPLS LDP
+- **私网协议**：OSPF（CE ↔ PE）+ MP-BGP VPNv4（PE ↔ PE）
+
+
+### 全网 IP 地址规划表
+
+| 设备 | 接口      | 所属 | IP地址           | 对端                        |
+| :--- | :-------- | :--- | :--------------- | :-------------------------- |
+| CE1  | G0/0/0    | VPNA | 192.168.255.2/30 | PE1-G0/0/1（192.168.255.1） |
+| CE1  | Loopback1 | VPNA | 192.168.10.1/24  | -                           |
+| CE2  | G0/0/0    | VPNB | 192.168.255.2/30 | PE1-G0/0/2（192.168.255.1） |
+| CE2  | Loopback1 | VPNB | 192.168.10.1/24  | -                           |
+| PE1  | Loopback0 | 公网 | 1.1.1.1/32       | -                           |
+| PE1  | G0/0/0    | 公网 | 10.0.12.1/24     | P1-G0/0/0（10.0.12.2）      |
+| PE1  | G0/0/1    | VPNA | 192.168.255.1/30 | CE1-G0/0/0（192.168.255.2） |
+| PE1  | G0/0/2    | VPNB | 192.168.255.1/30 | CE2-G0/0/0（192.168.255.2） |
+| P1   | Loopback0 | 公网 | 2.2.2.2/32       | -                           |
+| P1   | G0/0/0    | 公网 | 10.0.12.2/24     | PE1-G0/0/0（10.0.12.1）     |
+| P1   | G0/0/1    | 公网 | 10.0.23.1/24     | PE2-G0/0/0（10.0.23.2）     |
+| PE2  | Loopback0 | 公网 | 3.3.3.3/32       | -                           |
+| PE2  | G0/0/0    | 公网 | 10.0.23.2/24     | P1-G0/0/1（10.0.23.1）      |
+| PE2  | G0/0/1    | VPNA | 192.168.255.5/30 | CE3-G0/0/0（192.168.255.4） |
+| PE2  | G0/0/2    | VPNB | 192.168.255.5/30 | CE4-G0/0/0（192.168.255.4） |
+| CE3  | G0/0/0    | VPNA | 192.168.255.4/30 | PE2-G0/0/1（192.168.255.5） |
+| CE3  | Loopback1 | VPNA | 192.168.20.1/24  | -                           |
+| CE4  | G0/0/0    | VPNB | 192.168.255.4/30 | PE2-G0/0/2（192.168.255.5） |
+| CE4  | Loopback1 | VPNB | 192.168.20.1/24  | -                           |
+
 
 #### 第一阶段：公网底层
 
 **步骤1：配置设备名称**
 
 ```text
+# PE1配置
 system-view
 sysname PE1
 
-# 在 P1、PE2 上同样需要配置设备名称，替换为对应主机名即可
+# P1、PE2 上同样需要配置设备名称，替换为对应主机名
 ```
 
 **步骤2：配置环回口和公网互联接口 IP**
 
 ```text
-interface LoopBack1
+# PE1配置
+interface Loopback0
  ip address 1.1.1.1 255.255.255.255
  quit
 
@@ -415,59 +464,56 @@ interface GigabitEthernet0/0/0
  ip address 10.0.12.1 255.255.255.0
  quit
 
-# 在 P1 上同样配置环回口 2.2.2.2 和公网接口 10.0.12.2、10.0.23.1
-# 在 PE2 上同样配置环回口 3.3.3.3 和公网接口 10.0.23.2
+# P1配置：Loopback0 = 2.2.2.2/32，G0/0/0 = 10.0.12.2/24，G0/0/1 = 10.0.23.1/24
+# PE2配置：Loopback0 = 3.3.3.3/32，G0/0/0 = 10.0.23.2/24
 ```
 
-**步骤3：配置 OSPF，保证环回口互通**
+**步骤3：配置 OSPF 保证环回口互通**
 
 ```text
+# PE1配置
 ospf 1
  area 0.0.0.0
   network 1.1.1.1 0.0.0.0
   network 10.0.12.0 0.0.0.255
  quit
 
-# 在 P1 上同样配置 OSPF，需宣告 2.2.2.2、10.0.12.0、10.0.23.0 三个网段
-# 在 PE2 上同样配置 OSPF，需宣告 3.3.3.3、10.0.23.0 网段
+# P1配置：宣告 2.2.2.2、10.0.12.0、10.0.23.0
+# PE2配置：宣告 3.3.3.3、10.0.23.0
 ```
 
 **步骤4：全局使能 MPLS 和 LDP**
 
 ```text
+# PE1配置
 mpls lsr-id 1.1.1.1
 mpls
  mpls ldp
  quit
 
-# 在 P1、PE2 上同样需要全局使能 MPLS 和 LDP，lsr-id 分别改为 2.2.2.2 和 3.3.3.3
+# P1配置：lsr-id 2.2.2.2
+# PE2配置：lsr-id 3.3.3.3
 ```
 
 **步骤5：在公网接口上使能 MPLS 和 LDP**
 
 ```text
+# PE1配置
 interface GigabitEthernet0/0/0
  mpls
  mpls ldp
  quit
 
-# 在 P1 上需要在 G0/0/0 和 G0/0/1 两个接口上都使能
-# 在 PE2 上需要在 G0/0/0 接口上使能
+# P1配置：G0/0/0 和 G0/0/1 都需要使能
+# PE2配置：G0/0/0 使能
 ```
 
 **步骤6：验证公网底层**
 
 ```text
-# 查看路由表
 display ip routing-table
-
-# 查看 LDP 会话状态
 display mpls ldp session
-
-# 查看 LSP 信息
 display mpls lsp
-
-# 在 P1、PE2 上同样执行验证，确保路由互通且 LDP 会话建立
 ```
 
 
@@ -476,8 +522,8 @@ display mpls lsp
 **步骤7：在 PE 上创建 VRF**
 
 ```text
-# VPNX
-ip vpn-instance VPNX
+# PE1配置
+ip vpn-instance VPNA
  ipv4-family
   route-distinguisher 100:1
   vpn-target 100:10 export-extcommunity
@@ -485,8 +531,7 @@ ip vpn-instance VPNX
  quit
  quit
 
-# VPNY
-ip vpn-instance VPNY
+ip vpn-instance VPNB
  ipv4-family
   route-distinguisher 100:2
   vpn-target 100:30 export-extcommunity
@@ -494,162 +539,182 @@ ip vpn-instance VPNY
  quit
  quit
 
-# 在 PE2 上同样需要创建 VPNX 和 VPNY，但 RT 方向与 PE1 相反：
-# VPNX: export 100:20 / import 100:10
-# VPNY: export 100:40 / import 100:30
-# RD 也必须不同，如 PE2 用 100:3 和 100:4
+# PE2配置
+# VPNA: route-distinguisher 100:3, export 100:20, import 100:10
+# VPNB: route-distinguisher 100:4, export 100:40, import 100:30
 ```
 
-**步骤8：将接口绑定到 VRF**
+**步骤8：将 PE 接口绑定到 VRF**
 
 ```text
+# PE1配置
 interface GigabitEthernet0/0/1
- ip binding vpn-instance VPNX
- ip address 192.168.1.1 255.255.255.0
+ ip binding vpn-instance VPNA
+ ip address 192.168.255.1 255.255.255.252
  quit
 
 interface GigabitEthernet0/0/2
- ip binding vpn-instance VPNY
- ip address 172.16.1.1 255.255.255.0
+ ip binding vpn-instance VPNB
+ ip address 192.168.255.1 255.255.255.252
  quit
 
-# 注意：ip binding vpn-instance 会清除接口原有 IP，需重新配置
+# PE2配置
+# G0/0/1 绑定 VPNA，IP = 192.168.255.5/30
+# G0/0/2 绑定 VPNB，IP = 192.168.255.5/30
 
-# 在 PE2 上同样需要将接口绑定 VPN 实例：
-# G0/0/1 绑定 VPNX，IP 为 192.168.2.1
-# G0/0/2 绑定 VPNY，IP 为 172.16.2.1
+# 注意：ip binding vpn-instance 会清除接口原有 IP，需重新配置
 ```
 
 **步骤9：配置私网 OSPF 绑定到 VRF**
 
 ```text
-ospf 100 vpn-instance VPNX
+# PE1配置
+ospf 100 vpn-instance VPNA
  area 0.0.0.0
-  network 192.168.1.0 0.0.0.255
+  network 192.168.255.0 0.0.0.3
  quit
 
-ospf 200 vpn-instance VPNY
+ospf 200 vpn-instance VPNB
  area 0.0.0.0
-  network 172.16.1.0 0.0.0.255
+  network 192.168.255.0 0.0.0.3
  quit
 
-# 在 PE2 上同样配置私网 OSPF：
-# ospf 100 vpn-instance VPNX，宣告 192.168.2.0
-# ospf 200 vpn-instance VPNY，宣告 172.16.2.0
+# PE2配置
+# ospf 100 vpn-instance VPNA，宣告 192.168.255.4/30
+# ospf 200 vpn-instance VPNB，宣告 192.168.255.4/30
 ```
 
 
 #### 第三阶段：CE 侧基础配置
 
-**步骤10：配置 CE 接口 IP 及内部 Loopback**
+**步骤10：配置 CE 接口 IP 及 Loopback 模拟私网**
 
 ```text
+# CE1配置
 system-view
 sysname CE1
 
 interface GigabitEthernet0/0/0
- ip address 192.168.1.2 255.255.255.0
+ ip address 192.168.255.2 255.255.255.252
  quit
 
-interface GigabitEthernet0/0/1
- ip address 172.16.1.2 255.255.255.0
+interface Loopback1
+ ip address 192.168.10.1 255.255.255.0
+ ospf network-type broadcast
  quit
 
-interface LoopBack0
- ip address 10.1.1.1 255.255.255.255
- quit
-
-# 在 CE2 上同样需要配置：
-# G0/0/0 IP 为 192.168.2.2
-# G0/0/1 IP 为 172.16.2.2
-# Loopback0 IP 为 10.2.2.2
+# CE2配置：G0/0/0 = 192.168.255.2/30，Loopback1 = 192.168.10.1/24
+# CE3配置：G0/0/0 = 192.168.255.4/30，Loopback1 = 192.168.20.1/24
+# CE4配置：G0/0/0 = 192.168.255.4/30，Loopback1 = 192.168.20.1/24
 ```
 
 **步骤11：配置 CE 的全局 OSPF**
 
 ```text
+# CE1配置
 ospf 100
  area 0.0.0.0
-  network 192.168.1.0 0.0.0.255
-  network 10.1.1.1 0.0.0.0
+  network 192.168.255.0 0.0.0.3
+  network 192.168.10.0 0.0.0.255
  quit
 
-ospf 200
- area 0.0.0.0
-  network 172.16.1.0 0.0.0.255
- quit
+# CE2配置：ospf 200，宣告 192.168.255.0/30 和 192.168.10.0/24
+# CE3配置：ospf 100，宣告 192.168.255.4/30 和 192.168.20.0/24
+# CE4配置：ospf 200，宣告 192.168.255.4/30 和 192.168.20.0/24
 
-# 注意：CE 上绝对不要配置 vpn-instance，它在全局路由表中运行
-
-# 在 CE2 上同样配置 OSPF：
-# ospf 100 宣告 192.168.2.0 和 10.2.2.2
-# ospf 200 宣告 172.16.2.0
+# 注意：CE 上不要配置 vpn-instance，它在全局路由表中运行
 ```
 
 
 #### 第四阶段：配置 MP-BGP 邻居
 
-**步骤12：建立 IBGP 邻居，使能 VPNv4 地址族**
-
-PE1：
+**步骤12：建立 IBGP 邻居使能 VPNv4 地址族**
 
 ```text
+# PE1配置
 bgp 100
  router-id 1.1.1.1
  peer 3.3.3.3 as-number 100
- peer 3.3.3.3 connect-interface LoopBack1
+ peer 3.3.3.3 connect-interface Loopback0
 
  ipv4-family vpnv4
   peer 3.3.3.3 enable
  quit
-```
 
-PE2：
-
-```text
-bgp 100
- router-id 3.3.3.3
- peer 1.1.1.1 as-number 100
- peer 1.1.1.1 connect-interface LoopBack1
-
- ipv4-family vpnv4
-  peer 1.1.1.1 enable
- quit
+# PE2配置
+# bgp 100, router-id 3.3.3.3, peer 1.1.1.1 as-number 100
+# peer 1.1.1.1 connect-interface Loopback0
+# ipv4-family vpnv4 下 peer 1.1.1.1 enable
 ```
 
 
-#### 第五阶段：私网路由引入 BGP
+#### 第五阶段：私网路由引入 BGP（OSPF → BGP）
 
 **步骤13：在 BGP 中引入私网路由**
 
-PE1：
-
 ```text
+# PE1配置
 bgp 100
- ipv4-family vpn-instance VPNX
+ ipv4-family vpn-instance VPNA
   import-route ospf 100
   quit
- ipv4-family vpn-instance VPNY
+ ipv4-family vpn-instance VPNB
   import-route ospf 200
   quit
-```
 
-PE2：
-
-```text
-bgp 100
- ipv4-family vpn-instance VPNX
-  import-route ospf 100
-  quit
- ipv4-family vpn-instance VPNY
-  import-route ospf 200
-  quit
+# PE2上做相同配置
 ```
 
 
-#### 第六阶段：验证配置
+#### 第六阶段：BGP 路由引入 OSPF（BGP → OSPF）
 
-**步骤14-17：验证命令**
+**步骤14：创建路由策略和前缀列表**
+
+```text
+# PE1配置
+# VPNA：匹配远端 CE3 的 192.168.20.0/24
+ip ip-prefix PE1-TO-VPNA index 10 permit 192.168.20.0 24
+ip ip-prefix PE1-TO-VPNA index 20 permit 192.168.255.4 30
+
+# VPNB：匹配远端 CE4 的 192.168.20.0/24
+ip ip-prefix PE1-TO-VPNB index 10 permit 192.168.20.0 24
+ip ip-prefix PE1-TO-VPNB index 20 permit 192.168.255.4 30
+
+route-policy PE1-TO-VPNA permit node 10
+ if-match ip-prefix PE1-TO-VPNA
+ quit
+
+route-policy PE1-TO-VPNB permit node 10
+ if-match ip-prefix PE1-TO-VPNB
+ quit
+
+# PE2配置
+# VPNA：ip ip-prefix PE2-TO-VPNA permit 192.168.10.0 24
+#        ip ip-prefix PE2-TO-VPNA permit 192.168.255.0 30
+# VPNB：ip ip-prefix PE2-TO-VPNB permit 192.168.10.0 24
+#        ip ip-prefix PE2-TO-VPNB permit 192.168.255.0 30
+# 路由策略名称相应改为 PE2-TO-VPNA 和 PE2-TO-VPNB
+```
+
+**步骤15：在 OSPF 进程中引入 BGP 路由**
+
+```text
+# PE1配置
+ospf 100 vpn-instance VPNA
+ import-route bgp route-policy PE1-TO-VPNA
+ quit
+
+ospf 200 vpn-instance VPNB
+ import-route bgp route-policy PE1-TO-VPNB
+ quit
+
+# PE2上做相同配置
+```
+
+
+#### 第七阶段：验证配置
+
+**步骤16-19：验证命令**
 
 ```text
 # 查看 BGP 邻居状态
@@ -658,35 +723,51 @@ display bgp peer
 # 查看 VPNv4 路由
 display bgp vpnv4 all routing-table
 
-# 查看 VPN 实例路由表
-display ip routing-table vpn-instance VPNX
-display ip routing-table vpn-instance VPNY
+# 查看 VPN 实例路由表（PE 上）
+display ip routing-table vpn-instance VPNA
+display ip routing-table vpn-instance VPNB
+
+# 查看 CE 路由表
+display ip routing-table
+
+# 查看 OSPF 引入的路由
+display ospf 100 routing
 
 # 测试连通性
-ping -vpn-instance VPNX 192.168.2.1
-ping -vpn-instance VPNY 172.16.2.1
+# CE1 ping CE3（VPNA）
+ping -a 192.168.10.1 192.168.20.1
+
+# CE2 ping CE4（VPNB）
+ping -a 192.168.10.1 192.168.20.1
+
+# PE 上测试
+ping -vpn-instance VPNA 192.168.20.1
+ping -vpn-instance VPNB 192.168.20.1
 ```
 
+### 关键注意事项
 
-### 6.4 关键注意事项
+| 序号 | 注意事项                                                     |
+| :--- | :----------------------------------------------------------- |
+| 1    | 公网底层（OSPF + LDP）必须提前打通，否则 BGP 邻居无法建立    |
+| 2    | RD 在同一台 PE 上必须唯一，不同 PE 可以相同（但建议全局唯一） |
+| 3    | RT 控制路由导入导出：Export 发布时携带，Import 接收时匹配    |
+| 4    | `ip binding vpn-instance` 会清除接口原有 IP 配置，需重新配置 |
+| 5    | CE 上不要配置 `vpn-instance`，它在全局路由表中运行           |
+| 6    | VPNA 和 VPNB 使用不同 RT，路由互不泄露                       |
+| 7    | 第六阶段（BGP → OSPF）是让 CE 学到远端路由的关键，不能省略   |
+| 8    | Loopback 接口配置 `ospf network-type broadcast` 确保 OSPF 通告 /24 网段 |
+| 9    | 测试连通性时建议使用 `-a` 指定 Loopback 作为源 IP，避免因互联口地址无回程路由导致不通 |
 
-| 序号 | 注意事项 |
-| :--- | :--- |
-| 1 | 公网底层（OSPF + LDP）必须提前打通，否则 BGP 邻居无法建立 |
-| 2 | RD 在同一台 PE 上必须唯一，不同 PE 可以相同（但建议全局唯一） |
-| 3 | RT 控制路由导入导出：Export 发布时携带，Import 接收时匹配 |
-| 4 | `ip binding vpn-instance` 会清除接口原有 IP 配置，需重新配置 |
-| 5 | CE 上绝对不要配置 `vpn-instance`，它在全局路由表中运行 |
-| 6 | VPNX 和 VPNY 使用不同 RT，路由互不泄露 |
 
+### 配置阶段汇总表
 
-### 6.5 配置阶段汇总表
-
-| 阶段 | 步骤 | 涉及设备 | 核心命令 |
-| :--- | :--- | :--- | :--- |
-| 公网底层 | 1-6 | PE1、P1、PE2 | `sysname`、`interface`、`ip address`、`ospf`、`network`、`mpls lsr-id`、`mpls`、`mpls ldp`、`mpls`（接口下）、`display mpls ldp session` |
-| 创建 VPN 实例 | 7-9 | PE1、PE2 | `ip vpn-instance`、`route-distinguisher`、`vpn-target`、`ip binding vpn-instance`、`ospf vpn-instance` |
-| CE 侧基础配置 | 10-11 | CE1、CE2 | `sysname`、`interface`、`ip address`、`ospf`（全局，不加 `vpn-instance`） |
-| MP-BGP 邻居 | 12 | PE1、PE2 | `bgp`、`router-id`、`peer`、`connect-interface`、`ipv4-family vpnv4`、`peer enable` |
-| 引入私网路由 | 13 | PE1、PE2 | `ipv4-family vpn-instance`、`import-route ospf` |
-| 验证 | 14-17 | PE1、PE2、CE1、CE2 | `display bgp peer`、`display bgp vpnv4 all routing-table`、`display ip routing-table vpn-instance`、`ping -vpn-instance` |
+| 阶段          | 步骤  | 涉及设备           | 核心命令                                                     |
+| :------------ | :---- | :----------------- | :----------------------------------------------------------- |
+| 公网底层      | 1-6   | PE1、P1、PE2       | `sysname`、`interface`、`ip address`、`ospf`、`network`、`mpls lsr-id`、`mpls`、`mpls ldp` |
+| 创建 VPN 实例 | 7-9   | PE1、PE2           | `ip vpn-instance`、`route-distinguisher`、`vpn-target`、`ip binding vpn-instance`、`ospf vpn-instance` |
+| CE 侧基础配置 | 10-11 | CE1、CE2、CE3、CE4 | `sysname`、`interface`、`ip address`、`ospf network-type broadcast`、`ospf`（全局） |
+| MP-BGP 邻居   | 12    | PE1、PE2           | `bgp`、`router-id`、`peer`、`ipv4-family vpnv4`、`peer enable` |
+| OSPF → BGP    | 13    | PE1、PE2           | `ipv4-family vpn-instance`、`import-route ospf`              |
+| BGP → OSPF    | 14-15 | PE1、PE2           | `ip ip-prefix`、`route-policy`、`import-route bgp route-policy` |
+| 验证          | 16-19 | 所有设备           | `display bgp peer`、`display bgp vpnv4 all routing-table`、`display ip routing-table`、`ping -a` |
