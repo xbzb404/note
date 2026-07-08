@@ -223,7 +223,7 @@ ospf 200 vpn-instance VPNB
 
 ### 第三阶段：CE 侧基础配置
 
-**步骤10：配置 CE 接口 IP 及 Loopback 模拟私网（修正IP）**
+**步骤10：配置 CE 接口 IP 及 Loopback 模拟私网**
 
 ```text
 # CE1配置
@@ -351,6 +351,7 @@ bgp 100
 # PE1配置
 bgp 100
  ipv4-family vpn-instance VPNA
+ #正常还是需要使用router-policy筛选指定ip的，不过这里就不操作了
   import-route ospf 100
   quit
  ipv4-family vpn-instance VPNB
