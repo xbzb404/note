@@ -22,6 +22,15 @@ int g0/0/1
  port default vlan 100
 #int g0/0/2相同配置
 
+#还可以使用trunk模式
+int g0/0/1
+ port link-type trunk
+ port trunk pvid vlan 100          # ← 显式设置PVID=100
+ port trunk allow-pass vlan 100    # 放行管理VLAN
+#int g0/0/2相同配置
+ # 如果AP支持多SSID绑定不同VLAN，可以再加：
+port trunk allow-pass vlan 100 200 300
+
 
 # AC互联端口：Trunk模式，放行管理VLAN和业务VLAN
 int g0/0/3
@@ -59,10 +68,13 @@ int g0/0/1
 dhcp enable
 int Vlanif100
  ip add 10.23.100.1 24
- dhcp select interface
+#这个是使用接口模式，直接按当前接口网络来配置dhcp，等价于创建一个网段完整使用的dhcp，且网关为该地址
+ dhcp select interface 
 
 # 指定CAPWAP隧道源接口（必须配，否则AP不知道找哪个IP建隧道）
 capwap source interface Vlanif100
+#还可以使用接口模式
+#capwap source ip-address 10.23.100.1
 
 wlan
 # 先改纳管模式（先no后mac或sn，保证上线完毕再改）
@@ -113,9 +125,11 @@ int LoopBack0
 ```bash
 #AC1
 wlan
-	ap-id 0 #使用连接的id进入管理页面
+	ap-id 0 #使用连接的id进入AP的管理页面
 		ap-name AP1 #改名
-        ap-group group1 #加入group1组以应用之前的配置
+        ap-group group1 #加入group1组以应用之前预设的配置
+        quit #退出后自动发布
+#等待几分钟，AP会自动重新上线
 ```
 
 
@@ -125,8 +139,11 @@ wlan
 
 ```bash
 display ap all          # 看AP状态是否为“Normal”
+display ap unauthorized record #可以查看未认证的AP的连接记录
 display vap ssid wlan-ZHB # 看VAP是否生效
 STA> ping 100.100.100.100   # 用户侧能通，证明全网调通
+
+#会看到地址会是从ip 254开始的，是从末尾开始分配，254，253，252这种顺序
 
 #此时记得把模式改为更安全的模式
 wlan
