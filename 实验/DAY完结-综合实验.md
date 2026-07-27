@@ -1,7 +1,13 @@
 # 综合实验
-![img](DAY完结-综合实验.assets/wps2.png)
+
+
+
 
 ## 拓扑
+
+![image-20260727134229213](DAY完结-综合实验.assets/image-20260727134229213.png)
+
+## ![A91wx5efw_1ud609b_rwk](DAY完结-综合实验.assets/A91wx5efw_1ud609b_rwk.png)
 
 拓扑分区：企业总部、4538 教育网、9394 移动、企业分支 1、企业分支 2
 
